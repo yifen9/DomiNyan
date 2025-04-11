@@ -4,8 +4,4 @@ end
 
 Smithy() = Smithy(4)
 
-function play(card::Smithy, player)
-    cards_draw!(player, 3)
-end
-
-card_register("Smithy", Smithy)
+register_card!("Smithy", Smithy, (card, player) -> cards_draw!(player, 3))

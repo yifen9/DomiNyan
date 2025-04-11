@@ -1,4 +1,4 @@
-module Registry
+module RegistryCards
 
 export CARD_REGISTRY, card_register, card_get
 
@@ -9,7 +9,7 @@ function card_register(name::String, constructor)
 end
 
 function card_get(name::String)
-    haskey(CARD_REGISTRY, name) || error("Card '$name' not found.")
+    haskey(CARD_REGISTRY, name) || error("Card '$name' not found. Available: $(keys(CARD_REGISTRY))")
     return CARD_REGISTRY[name]()
 end
 
