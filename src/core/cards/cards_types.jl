@@ -1,4 +1,4 @@
-module Types
+module CardsTypes
 
 export Card, CardTreasure, CardVictory, CardAction
 
