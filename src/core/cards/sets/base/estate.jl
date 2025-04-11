@@ -1,6 +1,6 @@
-struct Estate <: types_CardVictory
+struct Estate <: CardVictory
     cost::Int
     points::Int
 end
 
-registry_set("Estate", () -> Estate(2, 1), () -> nothing)
+set("Estate", () -> Estate(2, 1), () -> nothing)

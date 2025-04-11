@@ -1,26 +1,21 @@
 module Play
 
-using ..Cards.Types: types_Card
+using ..Cards
 
-# Include all submodules
-include("player.jl")
-include("dispatcher.jl")
+include("player/player.jl")
 
-for file in readdir(joinpath(@__DIR__, "effects"))
-    if endswith(file, ".jl")
-        include(joinpath("effects", file))
-    end
-end
+using .Player
 
-# Use selected symbols from submodules
-using .Player: PlayerState, player_new
-using .Dispatcher: dispatcher
+include("dispatcher/dispatcher.jl")
 
-using .Draw: draw_cards!
+using .Dispatcher
 
-# Export unified API
-export PlayerState, player_new
-export play_dispatcher
-export draw_cards!
+include("loader/effects_loader.jl")
+
+using .Effects
+
+export Player
+export Dispatcher
+export Effects
 
 end

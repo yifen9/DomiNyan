@@ -1,10 +1,10 @@
 module Types
 
-export types_Card, types_CardTreasure, types_CardVictory, types_CardAction
+export Card, CardTreasure, CardVictory, CardAction
 
-abstract type types_Card end
-abstract type types_CardTreasure <: types_Card end
-abstract type types_CardVictory <: types_Card end
-abstract type types_CardAction <: types_Card end
+abstract type Card end
+abstract type CardTreasure <: Card end
+abstract type CardVictory <: Card end
+abstract type CardAction <: Card end
 
 end

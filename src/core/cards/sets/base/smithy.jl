@@ -1,5 +1,5 @@
-struct Smithy <: types_CardAction
+struct Smithy <: CardAction
     cost::Int
 end
 
-registry_set("Smithy", () -> Smithy(4), (_, player, game) -> effects_draw_cards!(player, 3))
+set("Smithy", () -> Smithy(4), (card, player, game) -> Play.Effects.draw_cards!(player, 3))

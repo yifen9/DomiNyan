@@ -1,10 +1,4 @@
-module Draw
-
-using ..Player
-
-export draw_cards!
-
-function draw_cards!(player::PlayerState, n::Int)
+function draw_cards!(player::State, n::Int)
     for _ in 1:n
         if isempty(player.deck)
             if isempty(player.discard)
@@ -16,6 +10,4 @@ function draw_cards!(player::PlayerState, n::Int)
         end
         push!(player.hand, popfirst!(player.deck))
     end
-end
-
 end

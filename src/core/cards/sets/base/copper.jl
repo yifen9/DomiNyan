@@ -1,6 +1,6 @@
-struct Copper <: types_CardTreasure
+struct Copper <: CardTreasure
     cost::Int
     value::Int
 end
 
-registry_set("Copper", () -> Copper(0, 1), () -> nothing)
+set("Copper", () -> Copper(0, 1), () -> nothing)

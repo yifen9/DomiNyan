@@ -6,6 +6,7 @@ include("core/play/play.jl")
 using .Cards
 using .Play
 
-export Cards, Play
+export Cards
+export Play
 
 end
