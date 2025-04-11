@@ -1,7 +1,11 @@
 module Cards
 
-include("card_types.jl")
-include("card_registry.jl")
+include("types/types.jl")
+include("registry/registry.jl")
+
+using .Types
+using .Registry
+
 include("loader/sets_loader.jl")
 
 export Card, CardTreasure, CardVictory, CardAction

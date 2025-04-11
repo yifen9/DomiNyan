@@ -6,7 +6,7 @@ function load_selected_sets()
     for set in ENABLED_SETS
         set_path = joinpath(sets_root, set)
         if isdir(set_path)
-            for file in readdir(set_path)
+            for file in sort(readdir(set_path))
                 if endswith(file, ".jl")
                     include(joinpath("..", "sets", set, file))
                 end
