@@ -2,7 +2,7 @@ module Player
 
 using ..Types
 
-export PlayerState, player_new, cards_draw!, cards_discard!, cards_gain!, cards_play!
+export PlayerState, player_new, draw_cards!, discard_cards!, gain_cards!, play_cards!
 
 struct PlayerState
     hand::Vector{Card}
@@ -24,7 +24,7 @@ function player_new(deck::Vector{Card})::PlayerState
     return player
 end
 
-function cards_draw!(player::PlayerState, n::Int)
+function draw_cards!(player::PlayerState, n::Int)
     for _ in 1:n
         if isempty(player.deck)
             if isempty(player.discard)
@@ -39,23 +39,23 @@ function cards_draw!(player::PlayerState, n::Int)
     end
 end
 
-function cards_remove_from!(cards::Vector{Card}, card::Card)
+function remove_from!(cards::Vector{Card}, card::Card)
     idx = findfirst(isequal(card), cards)
     isnothing(idx) && error("Card not found in collection")
     deleteat!(cards, idx)
 end
 
-function cards_discard!(player::PlayerState, card::Card)
-    cards_remove_from!(player.hand, card)
+function discard_cards!(player::PlayerState, card::Card)
+    remove_from!(player.hand, card)
     push!(player.discard, card)
 end
 
-function cards_play!(player::PlayerState, card::Card)
-    cards_remove_from!(player.hand, card)
+function play_cards!(player::PlayerState, card::Card)
+    remove_from!(player.hand, card)
     push!(player.played, card)
 end
 
-function cards_gain!(player::PlayerState, card::Card)
+function gain_cards!(player::PlayerState, card::Card)
     push!(player.discard, card)
 end
 

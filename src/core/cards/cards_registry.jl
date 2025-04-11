@@ -15,12 +15,12 @@ end
 
 card_exists(name::String) = haskey(CARD_REGISTRY, name)
 
-function _card_not_found(name::String)
+function card_not_found(name::String)
     error("Card '$name' not found. Available cards: $(join(keys(CARD_REGISTRY), ", "))")
 end
 
 function card_get(name::String)
-    card_exists(name::String) || _card_not_found(name::String)
+    card_exists(name::String) || card_not_found(name::String)
 
     entry = CARD_REGISTRY[name]
 
@@ -28,13 +28,13 @@ function card_get(name::String)
 end
 
 function card_get_field(name::String)
-    card_exists(name::String) || _card_not_found(name::String)
+    card_exists(name::String) || card_not_found(name::String)
 
     return CARD_REGISTRY[name].constructor()
 end
 
 function card_get_play(name::String)
-    card_exists(name::String) || _card_not_found(name::String)
+    card_exists(name::String) || card_not_found(name::String)
 
     return CARD_REGISTRY[name].play_function
 end
