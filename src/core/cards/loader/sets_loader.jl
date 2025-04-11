@@ -1,6 +1,7 @@
 const SETS_ENABLED = ["base", "intrigue"]
 
 function sets_load_selected()
+
     sets_dir = normpath(joinpath(@__DIR__, "..", "sets"))
     for set in SETS_ENABLED
         set_path = joinpath(sets_dir, set)

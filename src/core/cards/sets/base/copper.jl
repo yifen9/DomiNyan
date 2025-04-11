@@ -1,4 +1,4 @@
-struct Copper <: CardTreasure
+struct Copper <: Types.CardTreasure
     cost::Int
     value::Int
 end

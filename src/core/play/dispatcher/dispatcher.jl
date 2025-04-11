@@ -1,9 +1,9 @@
 module Dispatcher
 
-using ..Cards.Types
-using ..Player
-
 export dispatcher
+
+using ..Types
+using ..Player
 
 function dispatcher(card::Card, player::State; args=nothing)
     name = nameof(typeof(card))

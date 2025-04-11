@@ -1,19 +1,15 @@
 module Play
 
-using ..Cards
+export Types, Player, Dispatcher, Effects
 
+include("types/types.jl")
 include("player/player.jl")
-
-using .Player
-
 include("dispatcher/dispatcher.jl")
+include("effects/effects.jl")
 
+using .Types
+using .Player
 using .Dispatcher
-
-include("loader/effects_loader.jl")
-
 using .Effects
-
-export Player, Dispatcher, Effects
 
 end

@@ -1,8 +1,8 @@
 module Player
 
-using ..Cards.Types
-
 export State, new
+
+using ..Types
 
 struct State
     hand::Vector{Card}

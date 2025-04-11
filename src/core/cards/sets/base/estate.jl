@@ -1,4 +1,4 @@
-struct Estate <: CardVictory
+struct Estate <: Types.CardVictory
     cost::Int
     points::Int
 end

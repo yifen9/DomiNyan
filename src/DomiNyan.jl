@@ -1,11 +1,11 @@
 module DomiNyan
 
-include("core/cards/cards.jl")
+export Play, Cards 
+
 include("core/play/play.jl")
+include("core/cards/cards.jl")
 
-using .Cards
 using .Play
-
-export Cards, Play
+using .Cards
 
 end

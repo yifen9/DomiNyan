@@ -11,3 +11,5 @@ function draw_cards!(player::State, n::Int)
         push!(player.hand, popfirst!(player.deck))
     end
 end
+
+set!("draw_cards", draw_cards!)

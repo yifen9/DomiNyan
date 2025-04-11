@@ -1,13 +1,12 @@
 module Cards
 
-include("types/types.jl")
+export Registry
+
 include("registry/registry.jl")
 
-using .Types
 using .Registry
+using ..Play
 
 include("loader/sets_loader.jl")
-
-export Types, Registry
 
 end
