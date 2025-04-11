@@ -2,14 +2,14 @@ using Test
 using DomiNyan.Cards
 
 @testset "Card Construction Tests" begin
-    copper = Copper()
+    copper = card_get("Copper")
     @test copper.cost == 0
     @test copper.value == 1
 
-    estate = Estate()
+    estate = card_get("Estate")
     @test estate.cost == 2
     @test estate.points == 1
 
-    smithy = Smithy()
+    smithy = card_get("Smithy")
     @test smithy.cost == 4
 end
