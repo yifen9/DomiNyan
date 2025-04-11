@@ -14,8 +14,6 @@ include("loader/effects_loader.jl")
 
 using .Effects
 
-export Player
-export Dispatcher
-export Effects
+export Player, Dispatcher, Effects
 
 end
