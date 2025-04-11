@@ -5,4 +5,6 @@ end
 
 Estate() = Estate(2, 1)
 
-# card_set("Estate")
+estate_play!(card, player) = nothing
+
+card_set("Estate", Estate, estate_play!)

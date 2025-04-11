@@ -5,4 +5,6 @@ end
 
 Copper() = Copper(0, 1)
 
-# card_set("Copper")
+copper_play!(card, player) = nothing
+
+card_set("Copper", Copper, copper_play!)

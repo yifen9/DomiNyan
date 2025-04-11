@@ -10,6 +10,6 @@ using DomiNyan.Cards
     # @test estate.cost == 2
     # @test estate.points == 1
 
-    smithy = card_get("Smithy")
-    @test smithy.cost == 4
+    smithy_field = card_get_field("Smithy")
+    @test smithy_field.cost == 4
 end

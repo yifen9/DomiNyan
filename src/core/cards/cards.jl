@@ -13,6 +13,8 @@ include("play/play_logic.jl")
 
 include("loader/loader_sets.jl")
 
-export Card, CardTreasure, CardVictory, CardAction, CARD_REGISTRY, card_set, card_get, play
+export Card, CardTreasure, CardVictory, CardAction
+export CARD_REGISTRY, card_set, card_get, card_get_field, card_get_play
+export play
 
 end

@@ -4,4 +4,6 @@ end
 
 Smithy() = Smithy(4)
 
-card_set("Smithy", Smithy, (card, player) -> cards_draw!(player, 3))
+smithy_play!(card, player) = cards_draw!(player, 3)
+
+card_set("Smithy", Smithy, smithy_play!)
