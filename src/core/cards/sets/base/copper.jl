@@ -5,4 +5,4 @@ end
 
 Copper() = Copper(0, 1)
 
-card_register("Copper", Copper)
+# card_set("Copper")

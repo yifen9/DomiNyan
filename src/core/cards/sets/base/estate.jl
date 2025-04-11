@@ -5,4 +5,4 @@ end
 
 Estate() = Estate(2, 1)
 
-card_register("Estate", Estate)
+# card_set("Estate")

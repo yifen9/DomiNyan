@@ -1,18 +1,18 @@
 module Cards
 
-include("loader/loader_registry.jl")
-using .RegistryLoader
-
-load_registries_all("registry")
-
 include("types/types.jl")
-include("play/play_logic.jl")
-
 using .Types
+
+include("../player/player.jl")
+using .Player
+
+include("registry/registry.jl")
 using .Registry
+
+include("play/play_logic.jl")
 
 include("loader/loader_sets.jl")
 
-export Card, CardTreasure, CardVictory, CardAction, card_get, play
+export Card, CardTreasure, CardVictory, CardAction, CARD_REGISTRY, card_set, card_get, play
 
 end

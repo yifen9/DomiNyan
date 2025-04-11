@@ -4,4 +4,4 @@ end
 
 Smithy() = Smithy(4)
 
-register_card!("Smithy", Smithy, (card, player) -> cards_draw!(player, 3))
+card_set("Smithy", Smithy, (card, player) -> cards_draw!(player, 3))

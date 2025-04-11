@@ -2,7 +2,6 @@ module PlayLogic
 
 using ..Types
 using ..Player
-using ..Registry
 
 export play
 
