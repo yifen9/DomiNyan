@@ -1,4 +1,4 @@
-module EffectsDraw
+module Draw
 
 using ..Player
 

@@ -1,12 +1,12 @@
 module Dispatcher
 
-using ..Cards
+using ..Card.types_Card
 
 export dispatcher
 
 function dispatcher(card::Card, player::PlayerState)
     name = nameof(typeof(card))
-    play_fn = card_play_get(string(name))
+    play_fn = registry_get_play(string(name))
     return play_fn(card, player, nothing)
 end
 
