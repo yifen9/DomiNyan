@@ -1,4 +1,3 @@
-# cards/card_registry.jl
 module CardRegistry
 
 export CARD_REGISTRY, card_register, card_get

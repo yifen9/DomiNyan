@@ -7,4 +7,4 @@ export Card, CardTreasure, CardVictory, CardAction
 export Copper, Estate, Smithy
 export play
 
-end # module
+end

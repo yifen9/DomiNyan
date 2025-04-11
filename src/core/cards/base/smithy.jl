@@ -6,4 +6,8 @@ struct Smithy <: CardAction
 end
 Smithy() = Smithy(4)
 
+function play(card::Smithy, player)
+    draw_cards!(player, 3)
+end
+
 card_register("Smithy", Smithy)
