@@ -1,1 +1,7 @@
+name = "DomiNyan"
+uuid = "e7c00b9a-e4ce-4443-9250-c607e66201ac"
+authors = ["Li Yifeng <yifen9@yandex.com>"]
+version = "0.1.0"
+
 [deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
