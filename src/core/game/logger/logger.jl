@@ -101,9 +101,9 @@ function export_state(game::Game, path::String)
             "deck" => stringify_cardlist(p.deck),
             "discard" => stringify_cardlist(p.discard),
             "played" => stringify_cardlist(p.played),
-            "actions" => p.actions,
-            "coins" => p.coins,
-            "buys" => p.buys
+            "action" => p.action,
+            "coin" => p.coin,
+            "buy" => p.buy
         ) for (i, p) in enumerate(game.players)
     ]
 

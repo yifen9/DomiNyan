@@ -1,5 +1,13 @@
 struct Smithy <: Types.CardAction
     cost::Int
+    card::Int
 end
 
-set("Smithy", () -> Smithy(4), (card, player, game) -> Effects.Registry.get("draw_cards")(player, 3))
+function smithy_play!(card::Smithy, player, game)
+    Effects.Registry.get("card_draw")(player, card.card)
+end
+
+set("Smithy",
+    () -> Smithy(4, 3),
+    smithy_play!
+)

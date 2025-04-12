@@ -7,7 +7,7 @@ using DomiNyan
     deck = [copper for _ in 1:10]
     player = Play.Player.new(deck)
 
-    Play.Effects.draw_cards!(player, 5)
+    Play.Effects.card_draw!(player, 5)
     @test length(player.hand) == 5
 
     # 使用 Smithy 测试

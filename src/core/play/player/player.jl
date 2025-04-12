@@ -9,9 +9,9 @@ mutable struct State
     deck::Vector{Card}
     discard::Vector{Card}
     played::Vector{Card}
-    actions::Int
-    coins::Int
-    buys::Int
+    action::Int
+    coin::Int
+    buy::Int
 end
 
 function new(deck::Vector{<:Card})::State

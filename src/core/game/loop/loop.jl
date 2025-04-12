@@ -23,7 +23,7 @@ function game_start(game::Game)
 
         # === Phase: ACTION (略过具体 action 卡) ===
         Logger.action!(log, player_id, :CardDraw; phase = :PhaseAction, turn = turn)
-        Play.Effects.Registry.get("draw_cards")(player, 5)
+        Play.Effects.Registry.get("card_draw")(player, 5)
 
         # === Phase: BUY ===
         if game.supply["Copper"] > 0

@@ -1,6 +1,9 @@
 struct Estate <: Types.CardVictory
     cost::Int
-    points::Int
+    vp::Int
 end
 
-set("Estate", () -> Estate(2, 1), () -> nothing)
+set("Estate",
+    () -> Estate(2, 1),
+    (card, player, game) -> nothing
+)
