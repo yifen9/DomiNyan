@@ -158,16 +158,9 @@ function export_csv(log::Log)
     CSV.write(joinpath(log.folder, "log.csv"), df; header=true)
 end
 
-function export_state(game::State.Game, path::String)
-    snapshot = State.game_snapshot(game)
-    open(path, "w") do io
-        JSON3.write(io, snapshot; indent=2)
-    end
-end
-
 function export_all(log::Log, game::State.Game)
     export_csv(log)
-    export_state(game, joinpath(log.folder, "state.json"))
+    Tracker.export_all(log.tracker, game)
 end
 
 end
