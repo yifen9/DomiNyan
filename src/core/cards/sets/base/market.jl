@@ -13,7 +13,8 @@ function market_play!(card::Market, player, game)
     Effects.Registry.get("coin_gain")(player, card.coin)
 end
 
-set("Market",
+Cards.Registry.set(
+    "Market",
     () -> Market(5, 1, 1, 1, 1),
     market_play!
 )

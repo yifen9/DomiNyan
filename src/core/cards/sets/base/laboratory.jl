@@ -9,7 +9,8 @@ function laboratory_play!(card::Laboratory, player, game)
     Effects.Registry.get("action_gain")(player, card.action)
 end
 
-set("Laboratory",
+Cards.Registry.set(
+    "Laboratory",
     () -> Laboratory(5, 2, 1),
     laboratory_play!
 )

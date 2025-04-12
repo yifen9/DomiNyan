@@ -1,5 +1,5 @@
-function coin_gain!(player::State, card::Card)
+function coin_gain!(player::Player.State, card::Types.Card)
     player.coin += Card.coin
 end
 
-set!("coin_gain", coin_gain!)
+Registry.set!("coin_gain", coin_gain!)

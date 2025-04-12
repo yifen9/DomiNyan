@@ -7,7 +7,8 @@ function smithy_play!(card::Smithy, player, game)
     Effects.Registry.get("card_draw")(player, card.card)
 end
 
-set("Smithy",
+Cards.Registry.set(
+    "Smithy",
     () -> Smithy(4, 3),
     smithy_play!
 )

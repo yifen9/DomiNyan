@@ -3,7 +3,8 @@ struct Duchy <: Types.CardVictory
     vp::Int
 end
 
-set("Duchy",
+Cards.Registry.set(
+    "Duchy",
     () -> Duchy(5, 3),
     () -> nothing
 )

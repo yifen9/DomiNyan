@@ -1,4 +1,4 @@
-using ...Play
+using ...Play: Types, Effects
 
 const SETS_ENABLED = ["base", "intrigue"]
 

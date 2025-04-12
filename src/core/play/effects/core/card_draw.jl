@@ -1,6 +1,6 @@
 using Random
 
-function card_draw!(player::State, n::Int)
+function card_draw!(player::Player.State, n::Int)
     for _ in 1:n
         if isempty(player.deck)
             if isempty(player.discard)
@@ -14,4 +14,4 @@ function card_draw!(player::State, n::Int)
     end
 end
 
-set!("card_draw", card_draw!)
+Registry.set!("card_draw", card_draw!)

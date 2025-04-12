@@ -1,5 +1,5 @@
-function card_gain!(player::State, card::Card)
+function card_gain!(player::Player.State, card::Types.Card)
     push!(player.discard, card)
 end
 
-set!("card_gain", card_gain!)
+Registry.set!("card_gain", card_gain!)

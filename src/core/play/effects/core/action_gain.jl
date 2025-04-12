@@ -1,5 +1,5 @@
-function action_gain!(player::State, card::Card)
+function action_gain!(player::Player.State, card::Types.Card)
     player.action += Card.action
 end
 
-set!("action_gain", action_gain!)
+Registry.set!("action_gain", action_gain!)

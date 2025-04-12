@@ -3,7 +3,8 @@ struct Estate <: Types.CardVictory
     vp::Int
 end
 
-set("Estate",
+Cards.Registry.set(
+    "Estate",
     () -> Estate(2, 1),
     () -> nothing
 )

@@ -8,7 +8,7 @@ using ..Logger
 using ...Play
 using ...Cards
 
-function game_start(game::Game)
+function game_start(game::State.Game)
     log = init!()
     turn = 1
 

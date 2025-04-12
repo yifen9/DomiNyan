@@ -7,7 +7,8 @@ function silver_play!(card::Silver, player, game)
     Effects.Registry.get("coin_gain")(player, card.coin)
 end
 
-set("Silver",
+Cards.Registry.set(
+    "Silver",
     () -> Silver(3, 2),
     silver_play!
 )

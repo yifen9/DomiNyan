@@ -5,7 +5,7 @@ export dispatcher
 using ..Types
 using ..Player
 
-function dispatcher(card::Card, player::State; args=nothing)
+function dispatcher(card::Types.Card, player::Player.State; args=nothing)
     name = nameof(typeof(card))
     play_fn = get_play(string(name))
     

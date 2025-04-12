@@ -9,7 +9,8 @@ function village_play!(card::Village, player, game)
     Effects.Registry.get("action_gain")(player, card.action)
 end
 
-set("Village",
+Cards.Registry.set(
+    "Village",
     () -> Village(3, 1, 2),
     village_play!
 )

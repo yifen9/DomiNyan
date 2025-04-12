@@ -1,4 +1,4 @@
-function card_discard!(player::State, card::Card)
+function card_discard!(player::Player.State, card::Types.Card)
     index = findfirst(==(card), player.hand)
     if isnothing(index)
         error("Card not in hand")
@@ -7,4 +7,4 @@ function card_discard!(player::State, card::Card)
     deleteat!(player.hand, index)
 end
 
-set!("card_discard", card_discard!)
+Registry.set!("card_discard", card_discard!)

@@ -1,4 +1,4 @@
-function card_trash!(player::State, card::Card, game)
+function card_trash!(player::Player.State, card::Types.Card, game)
     index = findfirst(==(card), player.hand)
     if isnothing(index)
         error("Card not found in hand")
@@ -8,4 +8,4 @@ function card_trash!(player::State, card::Card, game)
     push!(game.trash, card)
 end
 
-set!("card_trash", card_trash!)
+Registry.set!("card_trash", card_trash!)

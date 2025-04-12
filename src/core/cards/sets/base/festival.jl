@@ -11,7 +11,8 @@ function festival_play!(card::Festival, player, game)
     Effects.Registry.get("coin_gain")(player, card.coin)
 end
 
-set("Festival",
+Cards.Registry.set(
+    "Festival",
     () -> Festival(5, 2, 1, 2),
     festival_play!
 )

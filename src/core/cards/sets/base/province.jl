@@ -3,7 +3,8 @@ struct Province <: Types.CardVictory
     vp::Int
 end
 
-set("Province",
+Cards.Registry.set(
+    "Province",
     () -> Province(8, 6),
     () -> nothing
 )

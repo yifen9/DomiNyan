@@ -9,7 +9,8 @@ function woodcutter_play!(card::Woodcutter, player, game)
     Effects.Registry.get("coin_gain")(player, card.coin)
 end
 
-set("Woodcutter",
+Cards.Registry.set(
+    "Woodcutter",
     () -> Woodcutter(3, 1, 2),
     woodcutter_play!
 )

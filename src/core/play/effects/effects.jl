@@ -5,6 +5,7 @@ export load_all!, Registry
 include("registry/registry.jl")
 
 using .Registry
+
 using ..Types
 using ..Player
 

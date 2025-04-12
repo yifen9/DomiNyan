@@ -68,7 +68,7 @@ function game_new(
 )
 end
 
-function stringify_cardlist(cards::Vector{Types.Card})
+function stringify_cardlist(cards::Vector{Play.Types.Card})
     return sort([string(typeof(c).name.name) for c in cards])
 end
 
