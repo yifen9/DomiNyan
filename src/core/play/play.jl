@@ -1,6 +1,6 @@
 module Play
 
-export Types, Player, Dispatcher, Effects
+export Types, Player, Dispatcher, Actions, Effects
 
 include("types/types.jl")
 include("player/player.jl")

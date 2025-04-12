@@ -5,5 +5,5 @@ end
 
 set("Province",
     () -> Province(8, 6),
-    (card, player, game) -> nothing
+    () -> nothing
 )

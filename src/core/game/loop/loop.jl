@@ -46,7 +46,7 @@ function game_start(game::Game)
 
         # 切换玩家
         next_player = Base.mod(player_id, length(game.players)) + 1
-        game = Game(game.players, game.supply, next_player)
+        game.player_current = next_player
 
         if rand() < 0.1
             Logger.action!(log, player_id, :GameEnd; turn = turn)

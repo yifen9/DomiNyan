@@ -13,5 +13,5 @@ end
 
 set("Festival",
     () -> Festival(5, 2, 1, 2),
-    Festival_play!
+    festival_play!
 )

@@ -11,5 +11,5 @@ end
 
 set("Laboratory",
     () -> Laboratory(5, 2, 1),
-    Laboratory_play!
+    laboratory_play!
 )

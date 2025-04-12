@@ -15,5 +15,5 @@ end
 
 set("Market",
     () -> Market(5, 1, 1, 1, 1),
-    Market_play!
+    market_play!
 )

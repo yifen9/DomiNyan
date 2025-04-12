@@ -5,5 +5,5 @@ end
 
 set("Estate",
     () -> Estate(2, 1),
-    (card, player, game) -> nothing
+    () -> nothing
 )

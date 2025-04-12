@@ -5,7 +5,6 @@ export init!, turn!, action!, export_csv, export_state, export_all
 using CSV
 using DataFrames
 using Dates
-using JSON3
 using UUIDs
 
 include("fields/fields.jl")
@@ -89,46 +88,14 @@ function export_csv(log::Log, filepath::String)
     CSV.write(filepath, df)
 end
 
-function stringify_cardlist(cards::Vector{Types.Card})
-    return [string(typeof(c).name.name) for c in cards]
-end
-
-function export_state(game::Game, path::String)
-    players_data = [
-        Dict(
-            "id" => i,
-            "hand" => stringify_cardlist(p.hand),
-            "deck" => stringify_cardlist(p.deck),
-            "discard" => stringify_cardlist(p.discard),
-            "played" => stringify_cardlist(p.played),
-            "action" => p.action,
-            "coin" => p.coin,
-            "buy" => p.buy
-        ) for (i, p) in enumerate(game.players)
-    ]
-
-    supply_data = Dict(string(k) => v for (k, v) in game.supply)
-
-    exportable = Dict(
-        "game" => Dict(
-            "turn" => game.player_current
-        ),
-        "players" => players_data,
-        "supply" => supply_data
-    )
-
-    open(path, "w") do io
-        JSON3.write(io, exportable; indent=2)
-    end
-end
-
 function export_all(log::Log, game::Any, base_path::String="logs")
     timestamp = Dates.format(now(), "yyyy-mm-dd_HH-MM-SS")
     dir = joinpath("..", base_path, timestamp)
     mkpath(dir)
 
     export_csv(log, joinpath(dir, "log.csv"))
-    export_state(game, joinpath(dir, "state.json"))
+
+    game_json_save(game, joinpath(dir, "state.json"))
 end
 
 end
