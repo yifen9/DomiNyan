@@ -4,7 +4,7 @@ export State, new
 
 using ..Types
 
-struct State
+mutable struct State
     hand::Vector{Card}
     deck::Vector{Card}
     discard::Vector{Card}

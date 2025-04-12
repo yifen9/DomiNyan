@@ -1,3 +1,5 @@
+using Random
+
 function draw_cards!(player::State, n::Int)
     for _ in 1:n
         if isempty(player.deck)

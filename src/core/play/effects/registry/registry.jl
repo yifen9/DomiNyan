@@ -4,8 +4,6 @@ export REGISTRY, set!, get
 
 import Base: get
 
-using Random
-
 const REGISTRY = Dict{String, Function}()
 
 function set!(name::String, fn::Function)
