@@ -1,8 +1,9 @@
 module State
 
-export Game, game_new, game_snapshot, game_json_save, game_json_load
+export Game, set_phase, game_new, game_snapshot, game_json_save, game_json_load
 
 using JSON3
+using OrderedCollections
 using UUIDs
 
 using ...Play
@@ -11,10 +12,15 @@ using ...Cards
 mutable struct Game
     game_id::UUID
     turn::Int
+    phase::String
     players::Vector{Play.Player.State}
     player_current::Int
     supply::Dict{String, Int}
     trash::Vector{Play.Types.Card}
+end
+
+function set_phase!(game::Game, phase::String)
+    game.phase = phase
 end
 
 function default_deck()
@@ -52,6 +58,8 @@ function game_new(
 
     turn = 0
 
+    phase = "GAME"
+
     players = [Play.Player.new(deck_fn()) for _ in 1:n_players]
 
     player_current = isnothing(player_start) ? (random_start ? rand(1:n_players) : 1) : player_start
@@ -61,6 +69,7 @@ function game_new(
     return Game(
         game_id,
         turn,
+        phase,
         players,
         player_current,
         supply,
@@ -74,7 +83,7 @@ end
 
 function game_snapshot(game::Game)
     data_players = [
-        Dict(
+        OrderedDict(
             "id" => i,
             "hand" => stringify_cardlist(p.hand),
             "deck" => stringify_cardlist(p.deck),
@@ -86,19 +95,25 @@ function game_snapshot(game::Game)
         ) for (i, p) in enumerate(game.players)
     ]
 
-    data_supply = Dict(sort(collect(string(k) => v for (k, v) in game.supply)))
+    sorted_pairs = sort(
+        collect(string(k) => v for (k, v) in game.supply);
+        by = x -> lowercase(x.first)
+    )
+
+    data_supply = OrderedDict(sorted_pairs)
 
     data_trash = stringify_cardlist(game.trash)
 
-    exportable = Dict(
-        "game" => Dict(
+    exportable = OrderedDict(
+        "game" => OrderedDict(
             "game_id" => game.game_id,
             "turn" => game.turn,
+            "player_current" => game.player_current,
+            "phase" => game.phase,
             "supply" => data_supply,
             "trash" => data_trash,
         ),
         "players" => data_players,
-        "play_current" => game.player_current,
     )
 
     return exportable
@@ -139,6 +154,7 @@ function game_json_load(path::String)::Game
 
     game_id = UUID(json["game"]["game_id"])
     turn = json["game"]["turn"]
+    phase = Symbol(json["game"]["phase"])
 
     players = [player_reconstruct(p) for p in json["players"]]
     player_current = json["play_current"]

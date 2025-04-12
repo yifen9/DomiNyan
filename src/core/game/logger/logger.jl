@@ -1,6 +1,7 @@
 module Logger
 
 const CSV_COLUMNS = [
+    "log_id",
     "game_id",
     "timestamp",
     "category",
@@ -33,32 +34,42 @@ using .Loader
 @eval fields_all()
 
 using ..State
+using ..Tracker
+
 using ...Play
 
 mutable struct Log
     entries::Vector{Dict{String, Any}}
     folder::String
     echo::Bool
+    game::Union{State.Game, Nothing}
+    tracker::Union{Tracker.Log, Nothing}
 end
 
 function dir_create(base::String = joinpath("..", "logs"))
     timestamp = Dates.format(now(), "yyyy-mm-dd_HH-MM-SS")
     folder = joinpath(base, timestamp)
     mkpath(folder)
-
     return folder
 end
 
-function init!(; echo::Bool = false)
+function init!(;
+    echo::Bool = false,
+    game::Union{State.Game, Nothing} = nothing,
+    tracker::Union{Tracker.Log, Nothing} = Tracker.init!()
+)::Log
     folder = dir_create()
-    return Log([], folder, echo)
+    return Log([], folder, echo, game, tracker)
 end
 
-function push!(log::Log, action::Symbol; data=Dict{Symbol, Any}())
+function push!(log::Log, action::Symbol; data=Dict{Symbol, Any}(), game::Union{State.Game, Nothing}=nothing)
+    log_id = length(log.entries) + 1
+
     entry = Dict{String, Any}(
+        "log_id" => log_id,
         "timestamp" => now(),
-        "type" => Registry.get_name(action),
         "category" => String(Registry.get_category(action)),
+        "type" => Registry.get_name(action),
     )
 
     for field in Registry.get_fields(action)
@@ -79,7 +90,13 @@ function push!(log::Log, action::Symbol; data=Dict{Symbol, Any}())
     Base.push!(log.entries, entry)
 
     if log.echo
-        println("[LOG] ", Registry.get_name(action), " ", entry)
+        println("[LOG] -> ", Registry.get_name(action), " ", entry)
+    end
+
+    game_used = isnothing(game) ? log.game : game
+
+    if log.tracker !== nothing && game_used !== nothing
+        Tracker.push!(log.tracker, game_used, log_id)
     end
 end
 

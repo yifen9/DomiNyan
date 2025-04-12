@@ -18,8 +18,6 @@ end
 function run!(game::State.Game, log::Logger.Log)
     player = game.players[game.player_current]
 
-    Logger.push!(log, :PhaseStart; data=Dict(:phase => "buy"))
-
     treasures = filter(c -> c isa Cards.Types.CardTreasure, player.hand)
     for card in treasures
         player.coin += card.coin
@@ -59,8 +57,6 @@ function run!(game::State.Game, log::Logger.Log)
         player.coin -= card.cost
         player.buy -= 1
     end
-
-    Logger.push!(log, :PhaseEnd; data=Dict(:phase => "buy"))
 
     return nothing
 end

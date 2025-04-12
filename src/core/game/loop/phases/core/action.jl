@@ -12,8 +12,6 @@ using .....Cards
 function run!(game::State.Game, log::Logger.Log)
     player = game.players[game.player_current]
 
-    Logger.push!(log, :PhaseStart; data=Dict(:phase => "action"))
-
     strategy = Choose.strategy_get(:card_action_default)
 
     while player.action > 0
@@ -42,8 +40,6 @@ function run!(game::State.Game, log::Logger.Log)
 
         player.action -= 1
     end
-
-    Logger.push!(log, :PhaseEnd; data=Dict(:phase => "action"))
 
     return nothing
 end

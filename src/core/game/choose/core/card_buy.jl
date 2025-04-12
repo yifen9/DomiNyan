@@ -9,7 +9,6 @@ using ....Cards
 
 function default(player, game)
     cards = Utils.card_filter_affordable(game.supply, player.coin)
-    @show cards
     return isempty(cards) ? nothing : first(cards)
 end
 

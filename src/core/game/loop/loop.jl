@@ -13,10 +13,25 @@ using ...Play
 using ...Cards
 
 function turn_play!(game::State.Game, log)
+    State.set_phase!(game, "start")
+    Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
     Phases.Start.run!(game, log)
+    Logger.push!(log, :PhaseEnd; data=Dict(:phase => game.phase))
+
+    State.set_phase!(game, "action")
+    Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
     Phases.Action.run!(game, log)
+    Logger.push!(log, :PhaseEnd; data=Dict(:phase => game.phase))
+
+    State.set_phase!(game, "buy")
+    Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
     Phases.Buy.run!(game, log)
+    Logger.push!(log, :PhaseEnd; data=Dict(:phase => game.phase))
+
+    State.set_phase!(game, "cleanup")
+    Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
     Phases.Cleanup.run!(game, log)
+    Logger.push!(log, :PhaseEnd; data=Dict(:phase => game.phase))
 end
 
 function player_next!(game::State.Game)
@@ -29,7 +44,7 @@ function is_game_over(game::State.Game)::Bool
 end
 
 function game_start(game::State.Game)
-    log = Logger.init!(echo=true)
+    log = Logger.init!(game=game)
 
     for p in game.players
         Play.Effects.Registry.get("card_draw")(p, 5)
@@ -38,6 +53,7 @@ function game_start(game::State.Game)
     Logger.push!(log, :GameStart; data=Dict(:game_id => game.game_id))
 
     while !is_game_over(game)
+        State.set_phase!(game, "TURN")
         Logger.push!(log, :TurnStart; data=Dict(
             :turn => game.turn,
             :player => game.player_current,
@@ -45,6 +61,7 @@ function game_start(game::State.Game)
 
         turn_play!(game, log)
 
+        State.set_phase!(game, "TURN")
         Logger.push!(log, :TurnEnd; data=Dict(
             :turn => game.turn,
             :player => game.player_current,
@@ -53,6 +70,8 @@ function game_start(game::State.Game)
         game.turn += 1
         player_next!(game)
     end
+
+    State.set_phase!(game, "GAME")
 
     Logger.push!(log, :GameEnd; data=Dict(:game_id => game.game_id))
     Logger.export_all(log, game)
