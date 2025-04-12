@@ -3,7 +3,7 @@ struct Silver <: Types.CardTreasure
     coin::Int
 end
 
-function silver_play!(card::Silver, player, game)
+function silver_play!(card::Silver, player)
     Effects.Registry.get("coin_gain")(player, card.coin)
 end
 

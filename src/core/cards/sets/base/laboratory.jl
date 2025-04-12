@@ -4,7 +4,7 @@ struct Laboratory <: Types.CardAction
     action::Int
 end
 
-function laboratory_play!(card::Laboratory, player, game)
+function laboratory_play!(card::Laboratory, player)
     Effects.Registry.get("card_draw")(player, card.card)
     Effects.Registry.get("action_gain")(player, card.action)
 end

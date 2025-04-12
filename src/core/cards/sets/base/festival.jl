@@ -5,7 +5,7 @@ struct Festival <: Types.CardAction
     coin::Int
 end
 
-function festival_play!(card::Festival, player, game)
+function festival_play!(card::Festival, player)
     Effects.Registry.get("action_gain")(player, card.action)
     Effects.Registry.get("buy_gain")(player, card.buy)
     Effects.Registry.get("coin_gain")(player, card.coin)

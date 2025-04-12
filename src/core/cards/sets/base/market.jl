@@ -6,7 +6,7 @@ struct Market <: Types.CardAction
     coin::Int
 end
 
-function market_play!(card::Market, player, game)
+function market_play!(card::Market, player)
     Effects.Registry.get("card_draw")(player, card.card)
     Effects.Registry.get("action_gain")(player, card.action)
     Effects.Registry.get("buy_gain")(player, card.buy)

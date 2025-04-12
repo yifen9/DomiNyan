@@ -4,7 +4,7 @@ struct Woodcutter <: Types.CardAction
     coin::Int
 end
 
-function woodcutter_play!(card::Woodcutter, player, game)
+function woodcutter_play!(card::Woodcutter, player)
     Effects.Registry.get("buy_gain")(player, card.buy)
     Effects.Registry.get("coin_gain")(player, card.coin)
 end

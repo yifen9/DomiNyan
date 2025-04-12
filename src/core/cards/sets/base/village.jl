@@ -4,7 +4,7 @@ struct Village <: Types.CardAction
     action::Int
 end
 
-function village_play!(card::Village, player, game)
+function village_play!(card::Village, player)
     Effects.Registry.get("card_draw")(player, card.card)
     Effects.Registry.get("action_gain")(player, card.action)
 end

@@ -3,7 +3,7 @@ struct Smithy <: Types.CardAction
     card::Int
 end
 
-function smithy_play!(card::Smithy, player, game)
+function smithy_play!(card::Smithy, player)
     Effects.Registry.get("card_draw")(player, card.card)
 end
 
