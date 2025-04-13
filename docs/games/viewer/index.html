@@ -104,6 +104,7 @@
             const path = snapshotSelect.value;
             const data = await fetchJSON(path);
             viewer.textContent = JSON.stringify(data, null, 2);
+            renderPlayerStates(data); // ✅ 添加
         });
 
         if (trackers.length > 0) {
@@ -111,6 +112,7 @@
             snapshotSelect.value = firstPath;
             const data = await fetchJSON(firstPath);
             viewer.textContent = JSON.stringify(data, null, 2);
+            renderPlayerStates(data);
         }
       } catch (err) {
         viewer.textContent = `Failed to load tracker index: ${err}`;
@@ -135,10 +137,10 @@
 
             const title = document.createElement("h3");
             title.className = "title is-5";
-            title.textContent = Player ${player.id};
+            title.textContent = `Player ${player.id}`;
 
             const resources = document.createElement("p");
-            resources.innerHTML = <strong>Action:</strong> ${player.action} | <strong>Buy:</strong> ${player.buy} | <strong>Coins:</strong> ${player.coin};
+            resources.innerHTML = `<strong>Action:</strong> ${player.action} | <strong>Buy:</strong> ${player.buy} | <strong>Coins:</strong> ${player.coin}`;
 
             function renderZone(title, cards) {
             const label = document.createElement("strong");
