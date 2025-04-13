@@ -3,80 +3,56 @@ import { fetchSnapshotData } from "./loader.js";
 let chartInstance = null;
 
 /**
- * 黄金角度 HSL 为每个 playerId 生成独特颜色
- * e.g. playerId=1 => hue ~ 137°, playerId=2 => hue ~ 275°, etc.
+ * 动态调色板：根据 dataset 数量，每次分配完全独立颜色
+ * - 用 HSL 均分色环，去掉透明度
+ * - 饱和度 70%，亮度 50%（你可自行调）
  */
-function generatePlayerColor(playerId) {
-  const hue = (playerId * 137.508) % 360; 
-  return `hsl(${hue}, 80%, 50%)`;  
-}
-
-/** 为同一个玩家构建 3 条曲线 (Coin/Action/Buy)，用相同主色，不同 dash/pointStyle */
-function buildPlayerDatasets(playerId, entries, baseColor) {
-  // 排序
-  entries.sort((a, b) => a.log_id - b.log_id);
-
-  // 把 log_id -> coin / action / buy 转为 Chart.js data
-  const coinData   = entries.map(e => ({ x: e.log_id, y: e.coin }));
-  const actionData = entries.map(e => ({ x: e.log_id, y: e.action }));
-  const buyData    = entries.map(e => ({ x: e.log_id, y: e.buy }));
-
-  // 你也可以把 deckSize / handSize 做成更多 dataset
-  return [
-    {
-      label: `P${playerId} Coin`,
-      data: coinData,
-      borderColor: baseColor,
-      backgroundColor: baseColor + "33",  // 透明度
-      pointStyle: "circle",
-      tension: 0.3
-    },
-    {
-      label: `P${playerId} Action`,
-      data: actionData,
-      borderColor: baseColor,
-      backgroundColor: baseColor + "33",
-      borderDash: [4, 4],
-      pointStyle: "triangle",
-      tension: 0.3
-    },
-    {
-      label: `P${playerId} Buy`,
-      data: buyData,
-      borderColor: baseColor,
-      backgroundColor: baseColor + "33",
-      borderDash: [2, 6],
-      pointStyle: "rectRot",
-      tension: 0.3
-    }
-  ];
+function generatePalette(count) {
+  const colors = [];
+  for (let i = 0; i < count; i++) {
+    const hue = (360 * i) / count; 
+    colors.push(`hsl(${hue}, 70%, 50%)`);
+  }
+  return colors;
 }
 
 /**
- * 主函数：renderResourceChart
- * @param {Array} trackerData - 当前过滤后的 trackerIndex
- * @param {string} folder     - 当前对局文件夹
+ * 构建 "P2 Coin" 等曲线
+ * @param {string} label - e.g. "P2 Coin"
+ * @param {Array} dataArr - [ {x, y} ...]
+ * @returns {Object} - dataset config
  */
+function buildDataset(label, dataArr) {
+  return {
+    label,
+    data: dataArr,
+    // 颜色稍后再由 palette 动态赋值
+    borderColor: "#aaa",
+    // 不再填充点或填充曲线
+    backgroundColor: "transparent",
+    fill: false,
+    // 不需要虚线
+    borderDash: [],
+    // 不需要点：可将 pointRadius=0, or if you want small points:
+    pointRadius: 0,
+    pointHoverRadius: 5,
+    tension: 0.2   // 稍微顺滑
+  };
+}
+
 export async function renderResourceChart(trackerData, folder) {
   const container = document.getElementById("tab-chart");
   if (!container) return;
 
-  // 先清空旧图表
   container.innerHTML = "";
   if (chartInstance) {
     chartInstance.destroy();
     chartInstance = null;
   }
 
-  // 没数据则不画
-  if (!trackerData || trackerData.length === 0) {
-    return;
-  }
+  if (!trackerData || trackerData.length === 0) return;
 
-  // 先收集「实际出现」的玩家
-  const relevantPlayers = new Set(trackerData.map(e => e.player));
-
-  // 并行加载 snapshots
+  // 并发加载 snapshots
   const snapshots = await Promise.all(
     trackerData.map(entry => {
       const path = `/data/games/replays/${folder}/${entry.path}`;
@@ -87,15 +63,17 @@ export async function renderResourceChart(trackerData, folder) {
     })
   );
 
-  // 建立 playerMap: playerId -> [ {log_id, coin, action, buy}, ... ]
+  // 先聚合 data: playerId => { coin, action, buy } arrays
   const playerMap = new Map();
-  relevantPlayers.forEach(pid => playerMap.set(pid, []));  // 先初始化
-
+  // 取实际出现的 players
+  const playerIds = [...new Set(trackerData.map(e=> e.player))].sort((a,b)=>a-b);
+  // 初始化
+  playerIds.forEach(p=> playerMap.set(p, []));
+  
   snapshots.forEach(({ log_id, snapshot }) => {
     if (!snapshot.players) return;
     snapshot.players.forEach(p => {
-      // 如果 p.id 在 relevantPlayers 中才收集
-      if (!playerMap.has(p.id)) return; 
+      if (!playerMap.has(p.id)) return;
       playerMap.get(p.id).push({
         log_id,
         coin:   p.coin,
@@ -105,29 +83,46 @@ export async function renderResourceChart(trackerData, folder) {
     });
   });
 
-  // 为出现过的玩家构造 datasets
-  let datasets = [];
-  [...playerMap.keys()].sort((a,b)=>a-b).forEach(pid => {
+  // 构造 line datasets
+  let allDatasets = [];
+  playerIds.forEach(pid => {
     const arr = playerMap.get(pid);
-    if (!arr || arr.length===0) return; // 该玩家没数据
-    const baseColor = generatePlayerColor(pid);
-    const subSets = buildPlayerDatasets(pid, arr, baseColor);
-    datasets = datasets.concat(subSets);
+    if (!arr || arr.length===0) return;
+    // 按 log_id 排序
+    arr.sort((a,b)=> a.log_id - b.log_id);
+
+    // 每条资源都独立颜色 => "P2 Coin" "P2 Action" "P2 Buy"
+    // 3 条线 => 3 dataset
+    const coinData = arr.map(e => ({ x:e.log_id, y:e.coin }));
+    const actionData = arr.map(e => ({ x:e.log_id, y:e.action }));
+    const buyData = arr.map(e => ({ x:e.log_id, y:e.buy }));
+
+    // 构建3条
+    allDatasets.push(buildDataset(`P${pid} Coin`, coinData));
+    allDatasets.push(buildDataset(`P${pid} Action`, actionData));
+    allDatasets.push(buildDataset(`P${pid} Buy`, buyData));
   });
 
-  if (datasets.length === 0) {
-    return;
-  }
+  // 如果 allDatasets为空 -> 不画
+  if (allDatasets.length===0) return;
+
+  // 生成调色板 (每条曲线都分配独立颜色)
+  const palette = generatePalette(allDatasets.length);
+  // 给每个 dataset 赋一个颜色
+  allDatasets.forEach((ds, i) => {
+    ds.borderColor = palette[i];
+  });
 
   // 创建 canvas
   const canvas = document.createElement("canvas");
   container.appendChild(canvas);
 
-  // 构建图表
   const ctx = canvas.getContext("2d");
   chartInstance = new Chart(ctx, {
-    type: "line",
-    data: { datasets },
+    type: 'line',
+    data: {
+      datasets: allDatasets
+    },
     options: {
       responsive: true,
       plugins: {
@@ -135,27 +130,27 @@ export async function renderResourceChart(trackerData, folder) {
           display: true,
           text: "Player Resource Timeline"
         },
-        tooltip: {
-          mode: "index",
-          intersect: false
-        },
         legend: {
-          position: "bottom",
+          position: 'bottom',
           labels: {
-            usePointStyle: true,    // 用点样式代替大方块
-            boxWidth: 8,
-            boxHeight: 8,
-            padding: 12,
+            // 让图例显示小线段: or usePointStyle + pointRadius?
+            // usePointStyle: true,
+            // 你若要纯线段, 需 chart.js v4 config
+            boxWidth: 30,
+            boxHeight: 2,
             color: "#333",
-            font: {
-              size: 14
-            }
+            font: { size: 14 },
+            padding: 10
           }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
         }
       },
       interaction: {
-        mode: "nearest",
-        axis: "x",
+        mode: 'nearest',
+        axis: 'x',
         intersect: false
       },
       scales: {
