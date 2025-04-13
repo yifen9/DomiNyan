@@ -1,4 +1,6 @@
 site_name: DomiNyan
+repo_url: https://github.com/yifen9/DomiNyan
+repo_name: DomiNyan
 theme:
   name: material
 nav:
