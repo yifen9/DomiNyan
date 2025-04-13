@@ -5,11 +5,11 @@ export async function fetchJSON(path) {
 }
 
 export async function fetchReplaysIndex() {
-  return await fetchJSON("/data/games/replays/replays_index.json");
+  return await fetchJSON("/docs/data/games/replays/replays_index.json");
 }
 
 export async function fetchTrackerIndex(folder) {
-  return await fetchJSON(`/data/games/replays/${folder}/tracker_index.json`);
+  return await fetchJSON(`/docs/data/games/replays/${folder}/tracker_index.json`);
 }
 
 export async function fetchSnapshotData(path) {
