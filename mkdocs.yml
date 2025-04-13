@@ -4,5 +4,3 @@ theme:
 nav:
   - Home: index.md
   - Viewer: viewer.md
-extra_css:
-  - css/viewer/style.css
