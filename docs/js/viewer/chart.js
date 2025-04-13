@@ -55,7 +55,7 @@ export async function renderResourceChart(trackerData, folder) {
   // 并发加载 snapshots
   const snapshots = await Promise.all(
     trackerData.map(entry => {
-      const path = `/data/games/replays/${folder}/${entry.path}`;
+      const path = `/data/games/replays/${folder}/${entry.path.replace(/\\/g, "/")}`;
       return fetchSnapshotData(path).then(json => ({
         log_id: entry.log_id,
         snapshot: json

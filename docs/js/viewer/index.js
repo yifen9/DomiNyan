@@ -140,7 +140,7 @@ function renderSnapshotOptions(trackerList) {
   snapshotSelect.innerHTML = "";
   filtered.forEach(entry => {
     const option = document.createElement("option");
-    option.value = `./../data/games/replays/${folder}/${entry.path}`;
+    option.value = `./../data/games/replays/${folder}/${entry.path.replace(/\\/g, "/")}`;
     option.textContent = `${entry.log_id} | Turn ${entry.turn} | P${entry.player} | ${entry.phase}`;
     snapshotSelect.appendChild(option);
   });
