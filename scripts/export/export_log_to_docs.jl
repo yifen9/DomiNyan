@@ -43,12 +43,16 @@ function export_log_to_docs(log_dir::String; copy_log_csv::Bool = true)
     timestamp = basename(log_dir)
     dest_dir = joinpath(DOCS_DIR, "data", timestamp)
     trackers_src = joinpath(log_dir, "tracker")
-    trackers_dest = joinpath(dest_dir, "trackers")
+    trackers_dest = joinpath(dest_dir, "tracker")
 
     mkpath(trackers_dest)
 
     for file in filter(f -> endswith(f, ".json"), readdir(trackers_src; join=true))
         cp(file, joinpath(trackers_dest, basename(file)); force=true)
+    end
+
+    if isfile(joinpath(log_dir, "tracker_index.json"))
+        cp(joinpath(log_dir, "tracker_index.json"), joinpath(dest_dir, "tracker_index.json"); force=true)
     end
 
     if isfile(joinpath(log_dir, "state.json"))
@@ -64,6 +68,7 @@ function export_log_to_docs(log_dir::String; copy_log_csv::Bool = true)
 
     pushfirst!(index, OrderedDict(
         "folder" => timestamp,
+        "timestamp" => timestamp,
         "count" => length(filter(f -> occursin(r"^\d+.*\.json$", f), readdir(trackers_dest))),
         "state" => isfile(joinpath(dest_dir, "state.json")),
         "csv" => copy_log_csv && isfile(joinpath(dest_dir, "log.csv")),

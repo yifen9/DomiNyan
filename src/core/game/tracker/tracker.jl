@@ -88,7 +88,7 @@ function export_tracker_index(tracker::Log)
 
             Base.push!(entries, OrderedDict(
                 "log_id" => log_id,
-                "path" => file,
+                "path" => joinpath("tracker", fname),
                 "filename" => fname,
                 "turn" => turn,
                 "player" => player,
