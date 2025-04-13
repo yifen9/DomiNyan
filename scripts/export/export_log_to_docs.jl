@@ -6,7 +6,7 @@ using FilePathsBase: basename
 using JSON3
 using OrderedCollections
 
-const DOCS_DIR = joinpath("site", "docs", "data", "games")
+const DOCS_DIR = joinpath("docs", "data", "games")
 
 function load_index(path::String)
     if isfile(path)
