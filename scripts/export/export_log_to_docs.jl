@@ -6,7 +6,7 @@ using FilePathsBase: basename
 using JSON3
 using OrderedCollections
 
-const DOCS_DIR = joinpath("docs", "games")
+const DOCS_DIR = joinpath("site", "docs", "data", "games")
 
 function load_index(path::String)
     if isfile(path)
@@ -31,7 +31,7 @@ function find_latest_unexported_logdir(logs_root::String)::Union{String, Nothing
     )
     sorted = sort(dirs; rev=true)
     for dir in sorted
-        if !isdir(joinpath(DOCS_DIR, "data", dir))
+        if !isdir(joinpath(DOCS_DIR, "replays", dir))
             return joinpath(logs_root, dir)
         end
     end
@@ -41,7 +41,7 @@ end
 function export_log_to_docs(log_dir::String; copy_log_csv::Bool = true)
     log_dir = normpath(log_dir)
     timestamp = basename(log_dir)
-    dest_dir = joinpath(DOCS_DIR, "data", timestamp)
+    dest_dir = joinpath(DOCS_DIR, "replays", timestamp)
     trackers_src = joinpath(log_dir, "tracker")
     trackers_dest = joinpath(dest_dir, "tracker")
 
@@ -63,7 +63,7 @@ function export_log_to_docs(log_dir::String; copy_log_csv::Bool = true)
         cp(joinpath(log_dir, "log.csv"), joinpath(dest_dir, "log.csv"); force=true)
     end
 
-    index_path = joinpath(DOCS_DIR, "games_index.json")
+    index_path = joinpath(DOCS_DIR, "replays", "replays_index.json")
     index = load_index(index_path)
 
     pushfirst!(index, OrderedDict(

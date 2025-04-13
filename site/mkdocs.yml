@@ -1,0 +1,8 @@
+site_name: DomiNyan
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Viewer: viewer.md
+extra_css:
+  - css/viewer/style.css
