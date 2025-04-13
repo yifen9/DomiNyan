@@ -6,3 +6,8 @@ theme:
 nav:
   - Home: index.md
   - Viewer: viewer.md
+extra_javascript:
+  - js/viewer.index.js
+  - js/viewer.loader.js
+  - js/viewer.render.js
+  - js/viewer.chart.js
