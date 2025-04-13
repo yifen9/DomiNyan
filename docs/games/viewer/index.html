@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dominion AI Visualizer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <style>
+    body {
+      padding: 2rem;
+    }
+    .json-viewer {
+      white-space: pre-wrap;
+      font-family: monospace;
+      background-color: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Dominion AI Visualizer</h1>
+      <div class="field">
+        <label class="label">Select a Game Session</label>
+        <div class="control">
+          <div class="select">
+            <select id="gameSelect"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Select a Tracker Snapshot</label>
+        <div class="control">
+          <div class="select">
+            <select id="snapshotSelect"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="box json-viewer" id="snapshotViewer">Select a tracker to preview its contents here...</div>
+    </div>
+  </section>
+
+  <script>
+    async function fetchJSON(url) {
+      const res = await fetch(url);
+      return res.json();
+    }
+
+    async function populateGameList() {
+      const games = await fetchJSON("../games_index.json");
+      const gameSelect = document.getElementById("gameSelect");
+      games.forEach(game => {
+        const option = document.createElement("option");
+        option.value = game.folder;
+        option.textContent = game.timestamp;
+        gameSelect.appendChild(option);
+      });
+
+      gameSelect.addEventListener("change", () => {
+        populateSnapshots(gameSelect.value);
+      });
+
+      if (games.length > 0) {
+        gameSelect.value = games[0].folder;
+        populateSnapshots(games[0].folder);
+      }
+    }
+
+    async function populateSnapshots(folder) {
+      const indexUrl = `../data/${folder}/trackers/tracker_index.json`;
+      const snapshotSelect = document.getElementById("snapshotSelect");
+      const viewer = document.getElementById("snapshotViewer");
+      snapshotSelect.innerHTML = "";
+
+      try {
+        const trackers = await fetchJSON(indexUrl);
+        trackers.forEach(entry => {
+          const option = document.createElement("option");
+          option.value = entry.path.replace("..", "..");
+          option.textContent = `${entry.log_id} | Turn ${entry.turn} | Player ${entry.player} | ${entry.phase}`;
+          snapshotSelect.appendChild(option);
+        });
+
+        snapshotSelect.addEventListener("change", async () => {
+          const path = snapshotSelect.value;
+          const data = await fetchJSON(path);
+          viewer.textContent = JSON.stringify(data, null, 2);
+        });
+
+        if (trackers.length > 0) {
+          snapshotSelect.value = trackers[0].path;
+          const data = await fetchJSON(trackers[0].path);
+          viewer.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        viewer.textContent = `Failed to load tracker index: ${err}`;
+      }
+    }
+
+    populateGameList();
+  </script>
+</body>
+</html>
