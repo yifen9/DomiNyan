@@ -31,7 +31,7 @@ function find_latest_unexported_logdir(logs_root::String)::Union{String, Nothing
     )
     sorted = sort(dirs; rev=true)
     for dir in sorted
-        if !isdir(joinpath(DOCS_DIR, dir))
+        if !isdir(joinpath(DOCS_DIR, "data", dir))
             return joinpath(logs_root, dir)
         end
     end
