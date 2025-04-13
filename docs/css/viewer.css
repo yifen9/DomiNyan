@@ -1,9 +1,0 @@
-#metricsToggles label {
-  display: inline-block;
-  margin-right: 1em;
-  cursor: pointer;
-}
-#metricsToggles input[type="checkbox"] {
-  vertical-align: middle;
-  margin-right: 0.25em;
-}
