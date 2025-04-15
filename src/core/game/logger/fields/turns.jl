@@ -3,6 +3,6 @@ import ..Loader: fields_register
 fields_register(["turn", "player"])
 
 Registry.set_many!([
-    (:TurnStart, "TURN_START", :turn, [:turn, :player]),
-    (:TurnEnd,   "TURN_END",   :turn, [:turn, :player]),
+    (:TurnStart, "turn_start", :turn, [:turn, :player]),
+    (:TurnEnd,   "turn_end",   :turn, [:turn, :player]),
 ])

@@ -20,6 +20,13 @@ function run!(game::State.Game, log::Logger.Log)
             break
         end
 
+        # 日志记录
+        Logger.push!(log, :CardPlay; data=Dict(
+            :card_target => Cards.Registry.get_name(card),
+            :player => game.player_current,
+            :card_count => 1,
+        ))
+
         play_func = Cards.Registry.get_play(card)
         play_func(card, player, game)
 
@@ -29,14 +36,6 @@ function run!(game::State.Game, log::Logger.Log)
         if idx !== nothing
             deleteat!(player.hand, idx)
         end
-
-        # 日志记录
-        Logger.push!(log, :CardPlay; data=Dict(
-            :card_target => Cards.Registry.get_name(card),
-            :player => game.player_current,
-            :card_count => 1,
-            :phase => :action,
-        ))
 
         player.action -= 1
     end

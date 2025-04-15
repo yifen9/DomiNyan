@@ -12,6 +12,7 @@ function card_draw!(player::Player.State, n::Int)
         end
         push!(player.hand, popfirst!(player.deck))
     end
+    return Dict("card_draw" => n)
 end
 
 Registry.set!("card_draw", card_draw!)

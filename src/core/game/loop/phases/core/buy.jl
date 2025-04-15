@@ -28,7 +28,6 @@ function run!(game::State.Game, log::Logger.Log)
             :card_target => Cards.Registry.get_name(card),
             :card_count => 1,
             :player => game.player_current,
-            :phase => :buy,
         ))
     end
 
