@@ -15,12 +15,6 @@ function run!(game::State.Game, log::Logger.Log)
     player.buy = 1
     player.coin = 0
 
-    Log.push!(log, :CardBuy; data=Dict(
-        :card_target => card_name,
-        :player => game.player_current,
-        :card_count => 1,
-    ))
-
     return nothing
 end
 
