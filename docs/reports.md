@@ -100,7 +100,7 @@ src/core/                   # Core simulation engine
 | Date | Contributor | Summary |
 |------|-------------|---------|
 | 2025-04-11 → 2025-04-13 | Li Yifeng | P1.1 & P1.2 finished |
-| [2025-04-19](./reports/2025-04-19.md) | Li Yifeng | Reporting pipeline bootstrapped |
+| [2025-04-19](./reports/2025-04-19.md) | Li Yifeng | Reporting pipeline bootstrapped, refactoring `core/play/` and `core/cards/` |
 
 ---
 
