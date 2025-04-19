@@ -20,5 +20,5 @@ nav:
   - Home: index.md
   - Viewer: viewer.md
   - Reports:
-    - report.md
+    - reports.md
     - 2025-04-19: reports/2025-04-19.md
