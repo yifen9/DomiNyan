@@ -41,16 +41,15 @@ DomiNyan/
 │   └── data/games/         # Auto‑exported logs & tracker snapshots
 ├── scripts/                # One‑off and automation utilities
 │   ├── export_tracker_to_docs.jl
-│   └── format.jl           # JuliaFormatter entry point
+│   └── format.jl           # (planned) JuliaFormatter entry point
 ├── test/                   # Unit & integration tests
-├── benchmarks/             # Performance micro‑benchmarks
 ├── .github/
 │   └── workflows/          # ci.yml, docs.yml, format.yml
 ├── Project.toml            # Julia package environment
 ├── Manifest.toml           # Locked dependency versions
-├── README.md               # Quick‑start & architecture overview
-├── CONTRIBUTING.md         # Coding style & PR checklist
-└── LICENSE                 # MIT
+├── README.md               # (planned) Quick‑start & architecture overview
+├── CONTRIBUTING.md         # (planned) Coding style & PR checklist
+└── LICENSE                 # (planned) MIT
 ```
 
 ### Game simulator:
