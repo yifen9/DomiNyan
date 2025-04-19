@@ -3,6 +3,22 @@ repo_url: https://github.com/yifen9/DomiNyan
 repo_name: DomiNyan
 theme:
   name: material
+  features:
+    - content.code.copy
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+plugins:
+  - awesome-pages
+  - search
 nav:
   - Home: index.md
   - Viewer: viewer.md
+  - Reports:
+    - report.md
+    - 2025-04-19: reports/2025-04-19.md
