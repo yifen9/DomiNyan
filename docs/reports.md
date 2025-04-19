@@ -150,7 +150,7 @@ src/core/                   # Core simulation engine
 
 > as of 2025‑04‑19
 
-- 41/60 base‑set card files implemented; remaining action cards queued.
+- 12/39 base‑set card files implemented; remaining action cards queued.
 - Core tracker stable; CSV + JSON logs auto‑export to `docs/data/games/`.
 - Viewer page loads snapshots; timeline scrubber half done.
 - Unit‑test suite: 3 unit tests, 100% passing; CI and docs workflows scaffolded.
