@@ -1,15 +1,39 @@
 using Test
 using DomiNyan
 
-@testset "Card Construction Tests" begin
-    copper_field = Cards.Registry.get_field("Copper")
-    @test copper_field.cost == 0
-    @test copper_field.coin == 1
+@testset "Registry API" begin
+    # Use the Treasure constructor to build a template
+    tpl = DomiNyan.Play.Types.Treasure("Dummy"; cost = 0, coin_gain = 5)
+    DomiNyan.Cards.Registry.set!(:dummy, tpl)
 
-    estate_field = Cards.Registry.get_field("Estate")
-    @test estate_field.cost == 2
-    @test estate_field.vp == 1
+    @test DomiNyan.Cards.Registry.exists(:dummy)
+    @test DomiNyan.Cards.Registry.get(:dummy) === tpl
+    @test :dummy in DomiNyan.Cards.Registry.list_cards()
+end
 
-    smithy_field = Cards.Registry.get_field("Smithy")
-    @test smithy_field.cost == 4
+@testset "@register Macro" begin
+    # Register via macro using the same Treasure constructor
+    @DomiNyan.Cards.register :macro_test DomiNyan.Play.Types.Treasure("M"; cost = 1, coin_gain = 2)
+    mt = DomiNyan.Cards.Registry.get(:macro_test)
+
+    @test mt.name == "M"
+    @test mt.cost == 1
+    @test mt.data[:coin_gain] == 2
+end
+
+@testset "SetsLoader Behavior" begin
+    # Ensure "base" is among the available sets
+    sets = DomiNyan.Cards.SetsLoader.set_list()
+    @test "base" in sets
+
+    # Unregister everything except Copper to isolate our test
+    for sym in DomiNyan.Cards.Registry.list_cards()
+        if sym != :Copper
+            delete!(DomiNyan.Cards.Registry.REGISTRY, sym)
+        end
+    end
+
+    # Load only Copper from the base set
+    DomiNyan.Cards.SetsLoader.sets_load!(sets = ["base"], cards = [:Copper])
+    @test DomiNyan.Cards.Registry.exists(:Copper)
 end

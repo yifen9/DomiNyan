@@ -1,10 +1,5 @@
-struct Estate <: Types.CardVictory
-    cost::Int
-    vp::Int
-end
-
-Cards.Registry.set(
-    "Estate",
-    () -> Estate(2, 1),
-    () -> nothing
+@register :Estate Play.Types.Victory(
+    "Estate";
+    cost = 2,
+    vp = 1
 )

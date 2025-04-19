@@ -1,6 +1,6 @@
-function coin_gain!(player::Player.State, card::Types.Card)
-    player.coin += card.coin
-    return Dict("coin_gain" => card.coin)
+function coin_gain!(pl::Player.State, _game, n::Int = 1)
+    pl.coin += n
+    return (; coin_gain = n)
 end
 
-Registry.set!("coin_gain", coin_gain!)
+@register :coin_gain coin_gain!

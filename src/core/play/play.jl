@@ -1,15 +1,23 @@
+"""
+Play — high‑level façade for the Dominion engine.
+
+`using Play` automatically loads and re‑exports the three internal
+modules so that game scripts only need a single import:
+
+* `Types`   – static card templates and type hierarchy
+* `Player`  – per‑player runtime state (deck, hand, etc.)
+* `Effects` – effect registry, dispatcher, and core effect loaders
+"""
 module Play
 
-export Types, Player, Dispatcher, Effects
+export Types, Player, Effects
 
 include("types/types.jl")
 include("player/player.jl")
-include("dispatcher/dispatcher.jl")
 include("effects/effects.jl")
 
 using .Types
 using .Player
-using .Dispatcher
 using .Effects
 
-end
+end # module Play

@@ -1,16 +1,10 @@
-struct Laboratory <: Types.CardAction
-    cost::Int
-    card::Int
-    action::Int
-end
-
-function laboratory_play!(card::Laboratory, player)
-    Effects.Registry.get("card_draw")(player, card.card)
-    Effects.Registry.get("action_gain")(player, card.action)
-end
-
-Cards.Registry.set(
-    "Laboratory",
-    () -> Laboratory(5, 2, 1),
-    laboratory_play!
+@register :Laboratory Play.Types.Action(
+    "Laboratory";
+    cost = 5,
+    card_draw = 2,
+    action_gain = 1,
+    effects = [
+        :card_draw,
+        :action_gain
+    ]
 )

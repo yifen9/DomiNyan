@@ -1,10 +1,5 @@
-struct Province <: Types.CardVictory
-    cost::Int
-    vp::Int
-end
-
-Cards.Registry.set(
-    "Province",
-    () -> Province(8, 6),
-    () -> nothing
+@register :Province Play.Types.Victory(
+    "Province";
+    cost = 8,
+    vp = 6
 )

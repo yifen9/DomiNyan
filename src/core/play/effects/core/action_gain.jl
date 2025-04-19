@@ -1,6 +1,6 @@
-function action_gain!(player::Player.State, n::Int)
-    player.action += n
-    return Dict("action_gain" => n)
+function action_gain!(pl::Player.State, _game, n::Int = 1)
+    pl.action += n
+    return (; action_gain = n)
 end
 
-Registry.set!("action_gain", action_gain!)
+@register :action_gain action_gain!

@@ -1,16 +1,10 @@
-struct Woodcutter <: Types.CardAction
-    cost::Int
-    buy::Int
-    coin::Int
-end
-
-function woodcutter_play!(card::Woodcutter, player)
-    Effects.Registry.get("buy_gain")(player, card.buy)
-    Effects.Registry.get("coin_gain")(player, card.coin)
-end
-
-Cards.Registry.set(
-    "Woodcutter",
-    () -> Woodcutter(3, 1, 2),
-    woodcutter_play!
+@register :Woodcutter Play.Types.Action(
+    "Woodcutter";
+    cost = 3,
+    buy_gain = 1,
+    coin_gain = 2,
+    effects = [
+        :buy_gain,
+        :coin_gain
+    ]
 )

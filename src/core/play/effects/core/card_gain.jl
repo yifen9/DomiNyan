@@ -1,6 +1,6 @@
-function card_gain!(player::Player.State, card::Types.Card)
-    push!(player.discard, card)
-    return Dict("card_gain" => card)
+function card_gain!(pl::Player.State, _game, card::Types.CardAbstract)
+    push!(pl.discard, card)
+    return (; card_gain = card)
 end
 
-Registry.set!("card_gain", card_gain!)
+@register :card_gain card_gain!

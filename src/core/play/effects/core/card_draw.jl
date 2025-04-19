@@ -1,18 +1,16 @@
-using Random
+using Random: shuffle!
 
-function card_draw!(player::Player.State, n::Int)
+function card_draw!(pl::Player.State, _game, n::Int)
+    drawn = 0
     for _ in 1:n
-        if isempty(player.deck)
-            if isempty(player.discard)
-                break
-            else
-                player.deck = shuffle!(copy(player.discard))
-                empty!(player.discard)
-            end
+        isempty(pl.deck) && !isempty(pl.discard) && begin
+            pl.deck = shuffle!(copy(pl.discard)); empty!(pl.discard)
         end
-        push!(player.hand, popfirst!(player.deck))
+        isempty(pl.deck) && break
+        push!(pl.hand, popfirst!(pl.deck))
+        drawn += 1
     end
-    return Dict("card_draw" => n)
+    return (; card_draw = drawn)
 end
 
-Registry.set!("card_draw", card_draw!)
+@register :card_draw card_draw!

@@ -2,18 +2,22 @@ module Registry
 
 export REGISTRY, set!, get
 
-import Base: get
+const REGISTRY = Dict{Symbol, Function}()
 
-const REGISTRY = Dict{String, Function}()
+"""
+    set!(key::Symbol, fn::Function)
 
-function set!(name::String, fn::Function)
-    REGISTRY[name] = fn
+Register an effect implementation under `key`.
+"""
+set!(key::Symbol, fn::Function) = (REGISTRY[key] = fn)
+
+"""
+    get(key::Symbol) -> Function
+
+Retrieve a registered effect; throw if missing.
+"""
+get(key::Symbol) = Base.get(REGISTRY, key) do
+    error("Effect $(key) not found in registry.")
 end
 
-function get(name::String)::Function
-    return get(REGISTRY, name) do
-        error("Effect $name not found in registry.")
-    end
-end
-
-end
+end # module

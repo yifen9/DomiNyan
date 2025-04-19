@@ -1,11 +1,8 @@
-function card_discard!(player::Player.State, card::Types.Card)
-    index = findfirst(==(card), player.hand)
-    if isnothing(index)
-        error("Card not in hand")
-    end
-    push!(player.discard, card)
-    deleteat!(player.hand, index)
-    return Dict("card_discard" => card)
+function card_discard!(pl::Player.State, _game, card::Types.CardAbstract)
+    idx = findfirst(==(card), pl.hand) || error("Card not in hand")
+    card = splice!(pl.hand, idx)          # remove first
+    push!(pl.discard, card)               # then add to discard
+    return (; card_discard = card)
 end
 
-Registry.set!("card_discard", card_discard!)
+@register :card_discard card_discard!
