@@ -1,4 +1,4 @@
-# DomiNyan Overview
+# Overview
 
 ---
 
@@ -10,7 +10,7 @@ The project couples a **deterministic simulation engine**, a structured logging 
 
 The simulator is written entirely in **[Julia](https://en.wikipedia.org/wiki/Julia_(programming_language))**, chosen for high performance and a composable design ethos. Fine‑grained hooks expose state tracking, logging, and modular logic injection (card behaviours, agent strategies, rule variants). Python is intentionally avoided to minimise overhead and keep a single fast runtime.
 
-Architecturally, the code base is evolving toward a **[domain‑specific language (DSL)](https://en.wikipedia.org/wiki/Domain-specific_language)** that cleanly expresses card effects and strategy reasoning. While the prototype lives in Julia macros, future iterations may isolate behaviour definitions in functional DSLs—e.g. Elixir, OCaml, or Gleam—or run them on high‑performance Rust executors, improving composability, testability, and long‑term maintainability.
+Architecturally, the code base is evolving toward a **[domain‑specific language (DSL)](https://en.wikipedia.org/wiki/Domain-specific_language)** that cleanly expresses card effects and strategy reasoning. While the prototype lives in Julia macros, future iterations may isolate behaviour definitions in functional DSLs—e.g. [Elixir](https://en.wikipedia.org/wiki/Elixir_(programming_language)), [OCaml](https://en.wikipedia.org/wiki/OCaml), or [Gleam](https://en.wikipedia.org/wiki/Gleam_(programming_language))—or run them on high‑performance [Rust](https://en.wikipedia.org/wiki/Rust_(programming_language)) executors, improving composability, testability, and long‑term maintainability.
 
 DomiNyan aims to:
 
