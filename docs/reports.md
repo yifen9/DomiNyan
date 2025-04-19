@@ -4,10 +4,9 @@
 
 ## Project Summary
 
-**[DomiNyan](https://yifen9.github.io/DomiNyan)** is an open, modular research project that builds an AI‑training platform for the *partially‑observable* strategic deck‑building game [Dominion](https://en.wikipedia.org/wiki/Dominion_(card_game)).  
-The project couples a **deterministic simulation engine**, a structured logging system, and an extensible self‑play framework for studying decision‑making in stochastic, multi‑agent environments.
+**[DomiNyan](https://yifen9.github.io/DomiNyan)** is an open, modular research project that builds an AI‑training platform for the *partially‑observable* strategic deck‑building game [Dominion](https://en.wikipedia.org/wiki/Dominion_(card_game)).
 
-Its long‑term vision is to become an open platform for experimentation and benchmarking in reinforcement learning (RL), agent modelling, and AI interpretability, with a deliberate focus on **reproducibility**, **accessibility**, and **scalability** across single‑ and multi‑agent settings.
+The project couples a **deterministic simulation engine**, a structured logging system, and an extensible self‑play framework for studying decision‑making in stochastic, multi‑agent environments. Its long‑term vision is to become an open platform for experimentation and benchmarking in reinforcement learning (RL), agent modelling, and AI interpretability, with a deliberate focus on **reproducibility**, **accessibility**, and **scalability** across single‑ and multi‑agent settings.
 
 The simulator is written entirely in **[Julia](https://en.wikipedia.org/wiki/Julia_(programming_language))**, chosen for high performance and a composable design ethos. Fine‑grained hooks expose state tracking, logging, and modular logic injection (card behaviours, agent strategies, rule variants). Python is intentionally avoided to minimise overhead and keep a single fast runtime.
 
