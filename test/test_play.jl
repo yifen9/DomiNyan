@@ -24,7 +24,7 @@ end
     @test DomiNyan.Play.Player.hand_size(pl) == 0
 
     # call draw effect directly
-    DomiNyan.Play.Effects.card_draw!(pl, nothing, 2)
+    DomiNyan.Play.Effects.Loader.card_draw!(pl, nothing, 2)
     @test DomiNyan.Play.Player.hand_size(pl) == 2
 end
 

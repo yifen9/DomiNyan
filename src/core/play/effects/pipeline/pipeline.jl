@@ -1,7 +1,8 @@
 module Pipeline
 
 using ..Registry   # lookup atomic ops
-export Step, Pipeline, run!
+
+export Step, Node, run!
 
 """
     Step(op; args=Dict(), if_cond=nothing, loop_var=nothing)
@@ -20,12 +21,12 @@ struct Step
 end
 
 """
-    Pipeline(steps; returns=[])
+    Node(steps; returns=[])
 
 A sequence of Steps.  After running, returns a NamedTuple of
 the requested `returns` symbols.
 """
-struct Pipeline
+struct Node
   steps::Vector{Step}
   returns::Vector{Symbol}
 end
@@ -35,7 +36,7 @@ end
 
 Execute each step in order.  Return NamedTuple(pipe.returns).
 """
-function run!(pipe::Pipeline, tpl, player, game)
+function run!(pipe::Node, tpl, player, game)
   results = Dict{Symbol,Any}()
   for st in pipe.steps
     if st.if_cond !== nothing && !st.if_cond(results, tpl, player, game)

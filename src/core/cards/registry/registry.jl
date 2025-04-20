@@ -1,6 +1,6 @@
 module Registry
 
-export REGISTRY, set!, get, exists, cards_list
+export REGISTRY, set!, get, exists, cards_list, @register
 
 using ...Play                    # CardTemplate
 
@@ -24,5 +24,20 @@ exists(key::Symbol) = haskey(REGISTRY, key)
 
 "Return a sorted `Vector{Symbol}` listing all registered card names."
 cards_list() = sort!(collect(keys(REGISTRY)))
+
+# Convenience macro – no need for a separate file
+"""
+    @register sym expr
+
+Create a CardTemplate via `expr` and register under `sym`.
+"""
+macro register(sym, expr)
+    quote
+        if exists($(esc(sym)))
+            @warn "Card $(string($(esc(sym)))) is being overwritten."
+        end
+        set!($(esc(sym)), $(esc(expr)))
+    end
+end
 
 end # module

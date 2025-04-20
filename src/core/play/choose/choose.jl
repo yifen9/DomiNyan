@@ -2,16 +2,12 @@ module Choose
 
 export choose
 
-# load registry of strategies
 include("registry/strategies_registry.jl")
-using .Registry
-
-# load all strategy definitions
 include("loader/strategies_loader.jl")
-using .Loader
-
-# load helper utilities
 include("utils/utils.jl")
+
+using .Registry
+using .Loader
 using .Utils
 
 """
