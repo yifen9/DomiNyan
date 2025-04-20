@@ -1,5 +1,5 @@
 @register :Gold Play.Types.Treasure(
     "Gold";
     cost = 6,
-    coin_gain = 3
+    player_coin_gain = 3
 )

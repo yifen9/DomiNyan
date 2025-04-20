@@ -3,7 +3,7 @@ using DomiNyan
 
 @testset "Registry API" begin
     # Use the Treasure constructor to build a template
-    tpl = DomiNyan.Play.Types.Treasure("Dummy"; cost = 0, coin_gain = 5)
+    tpl = DomiNyan.Play.Types.Treasure("Dummy"; cost = 0, player_coin_gain = 5)
     DomiNyan.Cards.Registry.set!(:dummy, tpl)
 
     @test DomiNyan.Cards.Registry.exists(:dummy)
@@ -13,12 +13,12 @@ end
 
 @testset "@register Macro" begin
     # Register via macro using the same Treasure constructor
-    @DomiNyan.Cards.register :macro_test DomiNyan.Play.Types.Treasure("M"; cost = 1, coin_gain = 2)
+    @DomiNyan.Cards.register :macro_test DomiNyan.Play.Types.Treasure("M"; cost = 1, player_coin_gain = 2)
     mt = DomiNyan.Cards.Registry.get(:macro_test)
 
     @test mt.name == "M"
     @test mt.cost == 1
-    @test mt.data[:coin_gain] == 2
+    @test mt.data[:player_coin_gain] == 2
 end
 
 @testset "Loader Behavior" begin

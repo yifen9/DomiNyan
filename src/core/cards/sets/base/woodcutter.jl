@@ -1,10 +1,10 @@
 @register :Woodcutter Play.Types.Action(
     "Woodcutter";
     cost = 3,
-    buy_gain = 1,
-    coin_gain = 2,
+    player_buy_gain = 1,
+    player_coin_gain = 2,
     effects = [
-        :buy_gain,
-        :coin_gain
+        :player_buy_gain,
+        :player_coin_gain
     ]
 )

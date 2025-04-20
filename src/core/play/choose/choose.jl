@@ -1,13 +1,13 @@
 module Choose
 
-export choose, Registry, Loader, Utils
+export choose
 
 # load registry of strategies
-include("registry/registry.jl")
+include("registry/strategies_registry.jl")
 using .Registry
 
 # load all strategy definitions
-include("loader/loader.jl")
+include("loader/strategies_loader.jl")
 using .Loader
 
 # load helper utilities

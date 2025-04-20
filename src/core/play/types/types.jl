@@ -39,12 +39,12 @@ end
 # Convenience constructors
 # ----------------------------
 """
-    Treasure(name; cost, coin_gain)
+    Treasure(name; cost, player_coin_gain)
 
 Create a standard Treasure card.
 """
-Treasure(name::String; cost::Int, coin_gain::Int) =
-    CardTemplate(name, cost, Set([:Treasure]), Dict(:coin_gain => coin_gain))
+Treasure(name::String; cost::Int, player_coin_gain::Int) =
+    CardTemplate(name, cost, Set([:Treasure]), Dict(:player_coin_gain => player_coin_gain))
 
 """
     Victory(name; cost, vp)
@@ -72,7 +72,7 @@ Action(name::String; cost::Int, kwargs...) =
 
 Return a NamedTuple summarising all public fields.  
 If `data_merge` is true, the `data` dictionary is splatted into the tuple,
-so `card_info(copper)[:coin_gain] == 1`.
+so `card_info(copper)[:player_coin_gain] == 1`.
 """
 function card_info(card::CardTemplate; data_merge::Bool = true)
     base = (name = card.name,
