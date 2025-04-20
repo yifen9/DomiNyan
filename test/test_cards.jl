@@ -8,7 +8,7 @@ using DomiNyan
 
     @test DomiNyan.Cards.Registry.exists(:dummy)
     @test DomiNyan.Cards.Registry.get(:dummy) === tpl
-    @test :dummy in DomiNyan.Cards.Registry.list_cards()
+    @test :dummy in DomiNyan.Cards.Registry.cards_list()
 end
 
 @testset "@register Macro" begin
@@ -21,19 +21,19 @@ end
     @test mt.data[:coin_gain] == 2
 end
 
-@testset "SetsLoader Behavior" begin
+@testset "Loader Behavior" begin
     # Ensure "base" is among the available sets
-    sets = DomiNyan.Cards.SetsLoader.set_list()
+    sets = DomiNyan.Cards.Loader.set_list()
     @test "base" in sets
 
     # Unregister everything except Copper to isolate our test
-    for sym in DomiNyan.Cards.Registry.list_cards()
+    for sym in DomiNyan.Cards.Registry.cards_list()
         if sym != :Copper
             delete!(DomiNyan.Cards.Registry.REGISTRY, sym)
         end
     end
 
     # Load only Copper from the base set
-    DomiNyan.Cards.SetsLoader.sets_load!(sets = ["base"], cards = [:Copper])
+    DomiNyan.Cards.Loader.sets_load!(sets = ["base"], cards = [:Copper])
     @test DomiNyan.Cards.Registry.exists(:Copper)
 end

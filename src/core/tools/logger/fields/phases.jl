@@ -1,6 +1,6 @@
 import ..Loader: fields_register
 
-fields_register(["phase"])
+fields_register([:phase])
 
 Registry.set_many!([
     (:PhaseStart, "phase_start",  :phase, [:phase]),

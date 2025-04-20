@@ -1,6 +1,6 @@
 module Registry
 
-export REGISTRY, set!, get, exists, list_cards
+export REGISTRY, set!, get, exists, cards_list
 
 using ...Play                    # CardTemplate
 
@@ -23,6 +23,6 @@ end
 exists(key::Symbol) = haskey(REGISTRY, key)
 
 "Return a sorted `Vector{Symbol}` listing all registered card names."
-list_cards() = sort!(collect(keys(REGISTRY)))
+cards_list() = sort!(collect(keys(REGISTRY)))
 
 end # module

@@ -1,7 +1,7 @@
 # src/core/cards/cards.jl
 module Cards
 
-export Registry, SetsLoader
+export Registry, @register, Loader
 
 include("registry/registry.jl")      # defines Cards.Registry
 using .Registry
@@ -20,9 +20,8 @@ macro register(sym, expr)
         Cards.Registry.set!($(esc(sym)), $(esc(expr)))
     end
 end
-export @register
 
-include("loader/sets_loader.jl")     # defines Cards.SetsLoader
-using .SetsLoader
+include("loader/sets_loader.jl")     # defines Cards.Loader
+using .Loader
 
 end # module Cards

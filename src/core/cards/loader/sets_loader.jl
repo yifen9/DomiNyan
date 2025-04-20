@@ -1,5 +1,5 @@
 # src/core/cards/loader/sets_loader.jl
-module SetsLoader
+module Loader
 
 export sets_load!, set_list, set_cards
 
@@ -52,4 +52,4 @@ function sets_load!(;
     return nothing
 end
 
-end # module SetsLoader
+end # module Loader

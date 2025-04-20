@@ -1,4 +1,4 @@
-module Start
+module Setup
 
 export run!
 

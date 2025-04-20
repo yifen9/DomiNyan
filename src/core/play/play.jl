@@ -10,14 +10,16 @@ modules so that game scripts only need a single import:
 """
 module Play
 
-export Types, Player, Effects
+export Types, Choose, Player, Effects
 
 include("types/types.jl")
 include("player/player.jl")
+include("choose/choose.jl")
 include("effects/effects.jl")
 
 using .Types
 using .Player
+using .Choose
 using .Effects
 
 end # module Play

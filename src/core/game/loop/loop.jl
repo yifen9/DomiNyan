@@ -13,11 +13,6 @@ using ...Play
 using ...Cards
 
 function turn_play!(game::State.Game, log)
-    State.set_phase!(game, "start")
-    Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
-    Phases.Start.run!(game, log)
-    Logger.push!(log, :PhaseEnd; data=Dict(:phase => game.phase))
-
     State.set_phase!(game, "action")
     Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
     Phases.Action.run!(game, log)
@@ -51,6 +46,11 @@ function game_start(game::State.Game)
     end
 
     Logger.push!(log, :GameStart; data=Dict(:game_id => game.game_id))
+
+    State.set_phase!(game, "setup")
+    Logger.push!(log, :PhaseStart; data=Dict(:phase => game.phase))
+    Phases.Start.run!(game, log)
+    Logger.push!(log, :PhaseEnd; data=Dict(:phase => game.phase))
 
     while !is_game_over(game)
         State.set_phase!(game, "TURN")

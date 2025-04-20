@@ -1,6 +1,6 @@
 import ..Loader: fields_register
 
-fields_register(["card_target", "card_source", "card_count", "player"])
+fields_register([:card_target, :card_source, :card_count, :player])
 
 Registry.set_many!([
     (:CardDraw,  "card_draw",  :effect, [:card_target, :card_source, :card_count, :player]),
