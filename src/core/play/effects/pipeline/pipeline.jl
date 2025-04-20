@@ -1,66 +1,97 @@
 module Pipeline
 
-using ..Registry   # lookup atomic ops
+export Step, Flow, run!
 
-export Step, Node, run!
+using ..Registry
+
+using ...Types
+using ...Player
+
 
 """
-    Step(op; args=Dict(), if_cond=nothing, loop_var=nothing)
+    Step(op; args=nothing, condition=nothing, result_key=nothing)
 
-One step in a pipeline:
-- `op`        : Symbol of registered atomic effect
-- `args`      : Dict{Symbol,Any} of keyword args
-- `if_cond`   : Optional Function(results, tpl, pl, game)=>Bool
-- `loop_var`  : Optional Symbol key to store the output
+One atomic step in a Flow:
+
+- `op`         : Symbol of registered effect
+- `args`       : Either a `Tuple`/`Vector` of positional args, or a `Dict{Symbol,Any}` of keyword args
+- `condition`  : Optional `(results, card_source, pl, game)->Bool` to skip step
+- `result_key` : Optional Symbol under which to store the step’s result
 """
 struct Step
-  op::Symbol
-  args::Dict{Symbol,Any}
-  if_cond::Union{Nothing,Function}
-  loop_var::Union{Nothing,Symbol}
+    op::Symbol
+    args::Any
+    condition::Union{Nothing,Function}
+    result_key::Union{Nothing,Symbol}
+    function Step(op; args=nothing, condition=nothing, result_key=nothing)
+        new(op, args, condition, result_key)
+    end
 end
 
 """
-    Node(steps; returns=[])
+    Flow(steps; returns=[])
 
-A sequence of Steps.  After running, returns a NamedTuple of
-the requested `returns` symbols.
+A sequence of Steps.  `returns` lists which `result_key`s to extract at end.
 """
-struct Node
-  steps::Vector{Step}
-  returns::Vector{Symbol}
+struct Flow
+    steps::Vector{Step}
+    returns::Vector{Symbol}
+    Flow(steps::Vector{Step}; returns::Vector{Symbol}=Symbol[]) = new(steps, returns)
 end
 
 """
-    run!(pipe, tpl, player, game)
+    run!(flow, card_source, pl, game) -> NamedTuple
 
-Execute each step in order.  Return NamedTuple(pipe.returns).
+Executes each Step in order.  Returns a NamedTuple of `flow.returns`.
 """
-function run!(pipe::Node, tpl, player, game)
-  results = Dict{Symbol,Any}()
-  for st in pipe.steps
-    if st.if_cond !== nothing && !st.if_cond(results, tpl, player, game)
-      continue
+function run!(
+    flow::Flow,
+    card_source::Types.CardTemplate,
+    pl::Player.State,
+    game
+)
+    @show flow
+    @show card_source
+    @show pl
+    @show game
+
+    results = Dict{Symbol,Any}()
+
+    for st in flow.steps
+        # 1) maybe skip
+        if st.condition !== nothing && !st.condition(results, card_source, pl, game)
+            continue
+        end
+
+        # 2) look up fn
+        fn = Registry.get(st.op)
+
+        # 3) dispatch with positional or keyword args
+        out = if st.args === nothing
+            fn(card_source, pl, game)
+        elseif st.args isa Tuple || st.args isa AbstractVector
+            fn(card_source, pl, game, st.args...)
+        elseif st.args isa Dict
+            fn(card_source, pl, game; st.args...)
+        else
+            error("Pipeline.Step.args must be Tuple, Vector, Dict or nothing")
+        end
+
+        # 4) store into results if requested
+        if st.result_key !== nothing
+            results[st.result_key] = out
+        end
     end
-    # prepare call args, substitute prior results
-    kw = Dict(st.args)
-    for (k,v) in kw
-      if v isa Symbol && haskey(results, v)
-        kw[k] = results[v]
-      end
+
+    # 5) build the return NamedTuple
+    if !isempty(flow.returns)
+        vals = map(r->results[r], flow.returns)
+        @show NamedTuple{Tuple(flow.returns)}(vals...)
+        return NamedTuple{Tuple(flow.returns)}(vals...)
+    else
+        @show NamedTuple()
+        return NamedTuple()
     end
-    # invoke atomic op
-    fn = Play.Effects.Registry.get(st.op)
-    out = fn(tpl, player, game; kw...)
-    # save to loop_var if requested
-    if st.loop_var !== nothing
-      results[st.loop_var] = out
-    end
-  end
-  # collect returns
-  return NamedTuple{Tuple(pipe.returns)}(
-    map(r->results[r], pipe.returns)...
-  )
 end
 
-end # module
+end # module Pipeline

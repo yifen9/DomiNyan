@@ -9,6 +9,7 @@ using ..Registry
 
 using ...Types
 using ...Player
+using ...Choose
 
 const _core_loaded_at = Ref{Union{Nothing,Float64}}(nothing)
 

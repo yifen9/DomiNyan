@@ -1,6 +1,11 @@
 using Random: shuffle!
 
-function card_draw!(pl::Player.State, _game, n::Int)
+function card_draw!(
+    _card_source::Types.CardTemplate,
+    pl::Player.State,
+    _game,
+    n::Int
+)
     drawn = 0
     for _ in 1:n
         isempty(pl.deck) && !isempty(pl.discard) && begin

@@ -1,4 +1,9 @@
-function coin_gain!(pl::Player.State, _game, n::Int = 1)
+function coin_gain!(
+    _card_source::Types.CardTemplate,
+    pl::Player.State,
+    _game,
+    n::Int = 1
+)
     pl.coin += n
     return (; coin_gain = n)
 end

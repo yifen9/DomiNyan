@@ -1,4 +1,9 @@
-function action_gain!(pl::Player.State, _game, n::Int = 1)
+function action_gain!(
+    _card_source::Types.CardTemplate,
+    pl::Player.State,
+    _game,
+    n::Int = 1
+)
     pl.action += n
     return (; action_gain = n)
 end

@@ -1,47 +1,53 @@
 module Registry
 
-export REGISTRY, set!, get, @register
+export set!, get, exists, @register
 
-const REGISTRY = Dict{Symbol, Function}()
-
-"""
-    set!(key::Symbol, fn::Function)
-
-Register an effect implementation under `key`.
-"""
-set!(key::Symbol, fn::Function) = (REGISTRY[key] = fn)
+# ─────────────────────────────────────────────────────────────────────────────
+# Store effect implementations
+# ─────────────────────────────────────────────────────────────────────────────
+const REGISTRY = Dict{Symbol,Function}()
 
 """
-    get(key::Symbol) -> Function
+    set!(key, fn)
 
-Retrieve a registered effect; throw if missing.
+Register effect function `fn` under `key`.
+"""
+function set!(key::Symbol, fn::Function)
+    REGISTRY[key] = fn
+    return nothing
+end
+
+"""
+    get(key) -> Function
+
+Lookup a registered effect implementation.  
+Throws an error if `key` is not found.
 """
 get(key::Symbol) = Base.get(REGISTRY, key) do
     error("Effect $(key) not found in registry.")
 end
 
-# ----------------------------------------------------------------------
-# Convenience macro for effect authors
-# ----------------------------------------------------------------------
 """
-    @register sym fn
+    exists(key) -> Bool
 
-register `fn` under the symbol `sym` at compile time.  Usage in an
-individual effect file:
-
-```julia
-@register :action_gain action_gain!
-```
-
-If `sym` already exists it will be overwritten **with a warning**,
-avoiding accidental duplicate registrations during `Revise.jl` hot‑reload.
+Check whether `key` is registered.
 """
+exists(key::Symbol) = haskey(REGISTRY, key)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Macro for authors to register at compile time:
+# Usage in an effect file:
+#
+#     @register :card_discard card_discard!
+#
+# If `sym` already exists it will be overwritten with a warning.
+# ─────────────────────────────────────────────────────────────────────────────
 macro register(sym, fn)
     return quote
-        if haskey(Registry.REGISTRY, $(esc(sym)))
-            @warn "Effect $(string($(esc(sym)))) is being overwritten."   
+        if exists($(esc(sym)))
+            @warn "Effect $(string($(esc(sym)))) is being overwritten."
         end
-        Registry.set!($(esc(sym)), $(esc(fn)))
+        set!($(esc(sym)), $(esc(fn)))
     end
 end
 

@@ -37,3 +37,40 @@ end
     DomiNyan.Cards.Loader.sets_load!(sets = ["base"], cards = [:Copper])
     @test DomiNyan.Cards.Registry.exists(:Copper)
 end
+
+@testset "Cellar Effect Pipeline" begin
+    # Prepare a dummy card template X and a Player.State
+    dummy = DomiNyan.Play.Types.CardTemplate(
+        "X"; 
+        cost = 0, 
+        type = Set([:Treasure]), 
+        data = Dict()
+    )
+    # Build a player with known hand/deck (no shuffle)
+    pl = DomiNyan.Play.Player.new([dummy for _ in 1:6]; deck_shuffle=false)
+    # Force exactly 3 cards in hand and 3 in deck
+    pl.hand    = [dummy, dummy, dummy]
+    pl.deck    = [dummy, dummy, dummy]
+    pl.discard = DomiNyan.Play.Types.CardAbstract[]
+
+    # Override choose_discard to always pick the first two cards
+    @DomiNyan.Play.Choose.Registry.register :choose_discard (game, pid) -> pl.hand[1:2] :card
+
+    # Fetch our Cellar template and dispatch its effects
+    DomiNyan.Cards.Loader.sets_load!(sets = ["base"], cards = [:Cellar])
+    tpl_cellar = DomiNyan.Cards.Registry.get(:Cellar)
+    results = DomiNyan.Play.Effects.dispatch(tpl_cellar, pl, nothing)
+
+    # 1) +1 action should have been applied
+    @test pl.action == 2
+
+    # 2) Pipeline returns exactly the two discarded cards
+    @test length(results) == 1
+    @test length(results[1][:chosen]) == 2
+
+    # 3) Hand size: 3 initial – 2 discarded + 2 drawn = 3
+    @test length(pl.hand) == 3
+
+    # 4) Deck size: 3 initial – 2 drawn = 1
+    @test length(pl.deck) == 1
+end

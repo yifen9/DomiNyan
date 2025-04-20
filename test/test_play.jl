@@ -24,13 +24,33 @@ end
     @test DomiNyan.Play.Player.hand_size(pl) == 0
 
     # call draw effect directly
-    DomiNyan.Play.Effects.Loader.card_draw!(pl, nothing, 2)
+    DomiNyan.Play.Effects.Loader.card_draw!(tpl, pl, nothing, 2)
     @test DomiNyan.Play.Player.hand_size(pl) == 2
+end
+
+@testset "Choose Tests" begin
+    # Prepare sample data
+    data = [10, 20, 30]
+
+    # Override :random to always pick first element for predictability
+    @DomiNyan.Play.Choose.Registry.register :random (args...) -> args[1][1] :generic
+
+    # Default choose(:random, ...)
+    @test DomiNyan.Play.Choose.choose(:random, data) == 10
+
+    # Register a simple “last element” strategy
+    @DomiNyan.Play.Choose.Registry.register :last (args...) -> last(args[1]) :generic
+
+    # Test named strategy
+    @test DomiNyan.Play.Choose.choose(:last, data) == 30
+
+    # Unknown name should fallback to :random
+    @test DomiNyan.Play.Choose.choose(:unknown, data) == 10
 end
 
 @testset "Effects & Registry Tests" begin
     # define a dummy effect
-    function plus_action!(pl, _game, n)
+    function plus_action!(_tpl, pl, _game, n=1)
         pl.action += n
         return (; gained=n)
     end

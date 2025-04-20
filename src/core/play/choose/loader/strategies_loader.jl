@@ -3,6 +3,7 @@ module Loader
 export load_strategies!
 
 using ..Registry  # import STRATEGIES, set!, get, list
+using ..Utils
 
 """
     load_strategies!()

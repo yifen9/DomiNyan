@@ -3,12 +3,12 @@ module Choose
 export choose
 
 include("registry/strategies_registry.jl")
-include("loader/strategies_loader.jl")
 include("utils/utils.jl")
+include("loader/strategies_loader.jl")
 
 using .Registry
-using .Loader
 using .Utils
+using .Loader
 
 """
     choose(name::Symbol = :random, args...)

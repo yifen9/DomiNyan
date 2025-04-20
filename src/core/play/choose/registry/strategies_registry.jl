@@ -60,12 +60,10 @@ Usage:
 @register :random random_choice :card
 If category omitted, defaults to :generic.
 """
-macro register(name, fn, category=:generic)
-    return
-        quote
-            Registry.set!($(esc(name)), $(esc(fn));
-            category=$(esc(category)))
-        end
+macro register(sym, fn, category)
+    return quote
+        set!($(esc(sym)), $(esc(fn)); category=$(esc(category)))
     end
+end
 
 end # module Registry

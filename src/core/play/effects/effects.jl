@@ -1,16 +1,10 @@
 module Effects
 
-# ----------------------------------------------------------------------
-# Public API
-# ----------------------------------------------------------------------
 export Registry,                 # sub‑module
        Loader,
        Pipeline,
        dispatch                  # execute effects attached to a card
 
-# ----------------------------------------------------------------------
-# Sub‑module: Registry (Symbol ⇒ Function)
-# ----------------------------------------------------------------------
 include("registry/registry.jl")  # defines module Registry
 include("loader/core_loader.jl")
 include("pipeline/pipeline.jl")
@@ -19,28 +13,67 @@ using .Registry
 using .Loader
 using .Pipeline
 
-# ───────────────────────────
-# Core dispatcher
-# ───────────────────────────
 using ..Types
 using ..Player
 
 """
-    dispatch(card, player, game; args=nothing) -> Vector
+    dispatch(
+      card_source::Types.CardTemplate,
+      pl::Player.State,
+      game;
+      overrides...
+    ) -> Vector{NamedTuple}
 
-Execute every effect symbol stored in `card.data[:effects]`
-and return a vector of their results.
+For each effect symbol `sym` in `card_source.data[:effects]`, this function:
+
+1. Looks up the implementation `fn = Registry.get(sym)`.  
+2. Determines an extra value `val` by checking, in order:
+     - `overrides[sym]` if provided,  
+     - else `card_source.data[sym]` if present,  
+     - else `nothing`.  
+3. If `val === nothing`, calls `fn(card_source, pl, game)`.  
+   Else if `val` is a tuple or vector, calls `fn(card_source, pl, game, val...)`.  
+   Otherwise calls `fn(card_source, pl, game, val)`.  
+4. Collects and returns all NamedTuple results in order.
 """
-function dispatch(card::Types.CardTemplate, player::Player.State, game; args = nothing)
-    syms = Base.get(card.data, :effects, Symbol[])
-    isempty(syms) && return Vector{Any}()
+function dispatch(
+    card_source::Types.CardTemplate,
+    pl::Player.State,
+    game;
+    overrides...
+)::Vector{NamedTuple}
 
-    results = Vector{Any}(undef, length(syms))
-    for (i, sym) in pairs(syms)
-        f   = Registry.get(sym)
-        arg = haskey(card.data, sym) ? card.data[sym] : args
-        results[i] = f(player, game, arg)
+    # collect results in order
+    results = NamedTuple[]
+
+    ### 1) simple effects ###
+    for sym in Base.get(card_source.data, :effects, Symbol[])
+        fn = Registry.get(sym)
+
+        # pick override ▶ card data ▶ nothing
+        val = haskey(overrides, sym) ? overrides[sym] :
+              Base.get(card_source.data, sym, nothing)
+
+        # invoke fn with 3 args or extra positional args
+        nt = if val === nothing
+            fn(card_source, pl, game)
+        elseif isa(val, Tuple) || isa(val, AbstractVector)
+            fn(card_source, pl, game, val...)
+        else
+            fn(card_source, pl, game, val)
+        end
+
+        push!(results, nt)
     end
+
+    ### 2) pipeline ###
+    if haskey(card_source.data, :pipeline)
+        pipe = card_source.data[:pipeline]
+        # assume pipe isa Pipeline.Flow or Pipeline.Node
+        nt_pipe = Pipeline.run!(pipe, card_source, pl, game)
+        push!(results, nt_pipe)
+    end
+
     return results
 end
 
