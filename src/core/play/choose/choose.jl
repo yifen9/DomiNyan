@@ -1,6 +1,6 @@
 module Choose
 
-export choose
+export Registry, Utils, Loader, choose
 
 include("registry/strategies_registry.jl")
 include("utils/utils.jl")

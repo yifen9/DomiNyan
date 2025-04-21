@@ -1,21 +1,20 @@
 module Registry
 
-export STRATEGIES, set!, get, list, list_by_category, @register
+export STRATEGIES, set!, get, exists, list, @register
 
 # Mapping: strategy name ⇒ (fn, category)
-const STRATEGIES = Dict{Symbol, Tuple{Function, Symbol}}()
+const STRATEGIES = Dict{Symbol, Function}()
 
 """
-    set!(name, fn; category = :generic)
+    set!(name, fn)
 
-Register strategy `fn` under `name` with optional `category`.
+Register strategy `fn` under `name`.
 """
 function set!(
     name::Symbol,
-    fn::Function;
-    category::Symbol = :generic
+    fn::Function
 )
-    STRATEGIES[name] = (fn, category)
+    STRATEGIES[name] = fn
     return nothing
 end
 
@@ -25,15 +24,15 @@ end
 Retrieve the strategy function registered under `name`.
 """
 function get(name::Symbol)::Function
-    return STRATEGIES[name][1]
+    return STRATEGIES[name]
 end
 
 """
-    get_category(name) -> Symbol
+    exists(key) -> Bool
 
-Retrieve the category of the strategy `name`.
+Check whether `key` is registered.
 """
-get_category(name::Symbol)::Symbol = STRATEGIES[name][2]
+exists(key::Symbol) = haskey(STRATEGIES, key)
 
 """
     list() -> Vector{Symbol}
@@ -43,26 +42,19 @@ List all registered strategy names.
 list()::Vector{Symbol} = collect(keys(STRATEGIES))
 
 """
-    list_by_category(cat) -> Vector{Symbol}
-
-List all strategies in category `cat`.
-"""
-function list_by_category(cat::Symbol)::Vector{Symbol}
-    return [n for (n, (_, c)) in STRATEGIES if c == cat]
-end
-
-"""
-    @register name fn [category]
+    @register name fn
 
 Macro to register a strategy at parse time.
 Usage:
 ```julia
-@register :random random_choice :card
-If category omitted, defaults to :generic.
+@register :random random_choice
 """
-macro register(sym, fn, category)
+macro register(sym, fn)
     return quote
-        set!($(esc(sym)), $(esc(fn)); category=$(esc(category)))
+        if exists($(esc(sym)))
+            @warn "Strategy $(string($(esc(sym)))) is being overwritten."
+        end
+        set!($(esc(sym)), $(esc(fn)))
     end
 end
 

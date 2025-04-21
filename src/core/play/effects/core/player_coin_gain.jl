@@ -1,11 +1,11 @@
-function coin_gain!(
+function player_coin_gain!(
     _card_source::Types.CardTemplate,
     pl::Player.State,
     _game,
     n::Int = 1
 )
     pl.coin += n
-    return (; coin_gain = n)
+    return (; player_coin_gain = n)
 end
 
-@register :coin_gain coin_gain!
+@register :player_coin_gain player_coin_gain!

@@ -89,7 +89,8 @@ Victory(
 ) = CardTemplate(
     name,
     cost,
-    Set([:Victory]), Dict(:vp => vp)
+    Set([:Victory]),
+    Dict(:vp => vp)
 )
 
 """

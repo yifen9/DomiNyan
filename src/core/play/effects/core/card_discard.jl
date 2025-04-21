@@ -1,30 +1,22 @@
 function card_discard!(
-    card_source::Types.CardTemplate,
+    _card_source::Types.CardTemplate,
     pl::Player.State,
-    game,
-    card_targets::Union{Types.CardAbstract, AbstractVector{<:Types.CardAbstract}}
+    _game,
+    card_target::Types.CardAbstract
 )
-    # Normalize input into a vector of card targets
-    targets = isa(card_targets, AbstractVector) ? card_targets : [card_targets]
-
-    # Container for the actually discarded cards
-    discarded = Types.CardAbstract[]
-
-    for card_target in targets
-        # Find the index of the target card in the player's hand
-        idx = findfirst(==(card_target), pl.hand) || error("Card not in hand: $card_target")
-        # Remove it from hand and append to discard pile
-        c = splice!(pl.hand, idx)
-        push!(pl.discard, c)
-        push!(discarded, c)
+    # 1) find index or throw
+    idx = findfirst(==(card_target), pl.hand)
+    # idx === nothing means “not found”
+    if idx === nothing
+        error("Card not in hand: $card_target")
     end
 
-    # Return a named tuple: card_discard for single, card_discards for multiple
-    if length(discarded) == 1
-        return (; card_discard = discarded[1])
-    else
-        return (; card_discards = discarded)
-    end
+    # 2) remove from hand and push to discard pile
+    card = splice!(pl.hand, idx)
+    push!(pl.discard, card)
+
+    # 3) return the discarded card
+    return (; card_discard = card)
 end
 
 @register :card_discard card_discard!

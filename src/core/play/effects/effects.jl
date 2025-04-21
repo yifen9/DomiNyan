@@ -46,32 +46,32 @@ function dispatch(
     # collect results in order
     results = NamedTuple[]
 
-    ### 1) simple effects ###
+    # effects
     for sym in Base.get(card_source.data, :effects, Symbol[])
-        fn = Registry.get(sym)
 
-        # pick override ▶ card data ▶ nothing
-        val = haskey(overrides, sym) ? overrides[sym] :
-              Base.get(card_source.data, sym, nothing)
+        if sym === :pipeline # pipeline
+            pipe = card_source.data[:pipeline]
+            # assume pipe isa Pipeline.Flow or Pipeline.Node
+            nt = Pipeline.run!(pipe, card_source, pl, game)
 
-        # invoke fn with 3 args or extra positional args
-        nt = if val === nothing
-            fn(card_source, pl, game)
-        elseif isa(val, Tuple) || isa(val, AbstractVector)
-            fn(card_source, pl, game, val...)
         else
-            fn(card_source, pl, game, val)
+            fn = Registry.get(sym)
+
+            # pick override ▶ card data ▶ nothing
+            val = haskey(overrides, sym) ? overrides[sym] :
+                Base.get(card_source.data, sym, nothing)
+
+            # invoke fn with 3 args or extra positional args
+            nt = if val === nothing
+                fn(card_source, pl, game)
+            elseif isa(val, Tuple) || isa(val, AbstractVector)
+                fn(card_source, pl, game, val...)
+            else
+                fn(card_source, pl, game, val)
+            end
         end
 
         push!(results, nt)
-    end
-
-    ### 2) pipeline ###
-    if haskey(card_source.data, :pipeline)
-        pipe = card_source.data[:pipeline]
-        # assume pipe isa Pipeline.Flow or Pipeline.Node
-        nt_pipe = Pipeline.run!(pipe, card_source, pl, game)
-        push!(results, nt_pipe)
     end
 
     return results

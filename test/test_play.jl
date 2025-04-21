@@ -33,13 +33,13 @@ end
     data = [10, 20, 30]
 
     # Override :random to always pick first element for predictability
-    @DomiNyan.Play.Choose.Registry.register :random (args...) -> args[1][1] :generic
+    @DomiNyan.Play.Choose.Registry.register :random (args...) -> args[1][1]
 
     # Default choose(:random, ...)
     @test DomiNyan.Play.Choose.choose(:random, data) == 10
 
     # Register a simple “last element” strategy
-    @DomiNyan.Play.Choose.Registry.register :last (args...) -> last(args[1]) :generic
+    @DomiNyan.Play.Choose.Registry.register :last (args...) -> last(args[1])
 
     # Test named strategy
     @test DomiNyan.Play.Choose.choose(:last, data) == 30
