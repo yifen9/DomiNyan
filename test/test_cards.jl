@@ -75,10 +75,11 @@ end
     @show results[1]
     @show results[2]
     @show results[2][:chosen]
+    @show results[2][:chosen][:choose_discard]
 
     # 2) Pipeline returns exactly the two discarded cards
     @test length(results) == 2
-    @test length(results[1][:chosen]) == 2
+    @test length(results[2][:chosen][:choose_discard]) == 2
 
     # 3) Hand size: 3 initial – 2 discarded + 2 drawn = 3
     @test length(pl.hand) == 3

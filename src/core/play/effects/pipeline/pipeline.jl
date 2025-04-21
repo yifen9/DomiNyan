@@ -78,6 +78,10 @@ function run!(
             st.args
         end
 
+        @show st.op
+        @show args_raw
+        @show typeof(args_raw)
+
         # Call the registered function with args_raw
         fn = Registry.get(st.op)
         if args_raw === nothing
@@ -100,6 +104,8 @@ function run!(
         # 2) dispatch with positional or keyword args in a loop
         out = dispatch_with_args(st, nothing, 1)
 
+        @show out
+
         if st.loop isa Int
             for i in 2:st.loop
                 out = dispatch_with_args(st, out, i)
@@ -117,17 +123,13 @@ function run!(
         # 4) store into results if requested
         if st.result_key !== nothing
             results[st.result_key] = out
-            @show results
-            @show results[st.result_key]
         end
     end
 
     # 5) build the return NamedTuple
     if !isempty(flow.returns)
-        @show flow.returns
-        vals = map(r->results[r], flow.returns)
-        @show vals
-        return NamedTuple{Tuple(flow.returns)}(vals...)
+        vals = map(r -> results[r], flow.returns)
+        return (; zip(flow.returns, vals)...)
     else
         return NamedTuple()
     end

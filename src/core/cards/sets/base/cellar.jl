@@ -16,18 +16,20 @@
             Play.Effects.Pipeline.Step(
                 :card_discard;
                 # for iteration i, take the i‑th chosen card as single argument
-                args      = (res, _cs, pl, _game, _out, i) -> (res[:chosen][:choose_discard][i],),
+                args      = (res, _cs, _pl, _game, _out, i) -> (res[:chosen][:choose_discard][i],),
                 # only run if there was at least one chosen
-                condition = (res, _cs, pl, _game)    -> !isempty(res[:chosen]),
+                condition = (res, _cs, _pl, _game)          -> !isempty(res[:chosen]),
                 # keep looping while we haven’t processed all chosen cards
-                loop      = (res, _cs, pl, _game, _out, i) -> i < length(res[:chosen])
+                loop      = (res, _cs, _pl, _game, _out, i) -> i < length(res[:chosen][:choose_discard])
             ),
 
             # 3) draw as many cards as were discarded
             Play.Effects.Pipeline.Step(
                 :card_draw;
                 # draw count = number of discarded (length of chosen)
-                args = (_res, _cs, pl, _game, _out, _i) -> (length(_res[:chosen]),)
+                args = (res, _cs, _pl, _game, _out, _i) -> (length(res[:chosen][:choose_discard]),),
+                # only run if there was at least one chosen
+                condition = (res, _cs, _pl, _game)      -> !isempty(res[:chosen])
             )
         ],
         returns = [:chosen]   # expose the list of discarded cards
