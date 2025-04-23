@@ -56,19 +56,20 @@ end
     # Override choose_discard to always pick the first two cards
     # @DomiNyan.Play.Effects.Registry.register :choose_discard (_card_source, pl, _game, args...) -> pl.hand[1:2]
 
-    @show DomiNyan.Play.Effects.Registry.get(:choose_discard)
+    # @show DomiNyan.Play.Effects.Registry.get(:choose_discard)
 
     # Fetch our Cellar template and dispatch its effects
     DomiNyan.Cards.Loader.sets_load!(sets = ["base"], cards = [:Cellar])
     tpl_cellar = DomiNyan.Cards.Registry.get(:Cellar)
-    @show Play.Player.deck_size(pl)
-    @show Play.Player.hand_size(pl)
+    # @show Play.Player.deck_size(pl)
+    # @show Play.Player.hand_size(pl)
     @test pl.action == 1
     results = DomiNyan.Play.Effects.dispatch(tpl_cellar, pl, nothing)
 
     # 1) +1 action should have been applied
     @test pl.action == 2
 
+    """
     @show Play.Player.deck_size(pl)
     @show Play.Player.hand_size(pl)
     @show results
@@ -76,10 +77,11 @@ end
     @show results[2]
     @show results[2][:chosen]
     @show results[2][:chosen][:choose_discard]
+    """
 
     # 2) Pipeline returns exactly the two discarded cards
     @test length(results) == 2
-    @test length(results[2][:chosen][:choose_discard]) == 2
+    @test length(results[:pipeline][:choose_discard]) == 2
 
     # 3) Hand size: 3 initial – 2 discarded + 2 drawn = 3
     @test length(pl.hand) == 3

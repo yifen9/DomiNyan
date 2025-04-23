@@ -68,7 +68,7 @@ end
     # dispatch and check side‑effects + return value
     out = DomiNyan.Play.Effects.dispatch(tpl2, pl2, nothing)
     @test pl2.action == 3
-    @test out[1][:gained] == 2
+    @test out[:gained] == 2
 
     # ensure registry.get returns our function
     f = DomiNyan.Play.Effects.Registry.get(:plus_action)

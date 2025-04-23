@@ -22,7 +22,7 @@ using ..Player
       pl::Player.State,
       game;
       overrides...
-    ) -> Vector{NamedTuple}
+    ) -> NamedTuple
 
 For each effect symbol `sym` in `card_source.data[:effects]`, this function:
 
@@ -37,44 +37,31 @@ For each effect symbol `sym` in `card_source.data[:effects]`, this function:
 4. Collects and returns all NamedTuple results in order.
 """
 function dispatch(
-    card_source::Types.CardTemplate,
-    pl::Player.State,
-    game;
-    overrides...
-)::Vector{NamedTuple}
+  card_source::Types.CardTemplate,
+  pl::Player.State,
+  game;
+  overrides...
+)::NamedTuple
+  
+  acc = NamedTuple()
 
-    # collect results in order
-    results = NamedTuple[]
+  for sym in Base.get(card_source.data, :effects, Symbol[])
+    fn  = Registry.get(sym)
+    val = haskey(overrides, sym) ? overrides[sym] :
+          Base.get(card_source.data, sym, nothing)
 
-    # effects
-    for sym in Base.get(card_source.data, :effects, Symbol[])
-
-        if sym === :pipeline # pipeline
-            pipe = card_source.data[:pipeline]
-            # assume pipe isa Pipeline.Flow or Pipeline.Node
-            nt = Pipeline.run!(pipe, card_source, pl, game)
-
-        else
-            fn = Registry.get(sym)
-
-            # pick override ▶ card data ▶ nothing
-            val = haskey(overrides, sym) ? overrides[sym] :
-                Base.get(card_source.data, sym, nothing)
-
-            # invoke fn with 3 args or extra positional args
-            nt = if val === nothing
-                fn(card_source, pl, game)
-            elseif isa(val, Tuple) || isa(val, AbstractVector)
-                fn(card_source, pl, game, val...)
-            else
-                fn(card_source, pl, game, val)
-            end
-        end
-
-        push!(results, nt)
+    nt = if val === nothing
+      fn(card_source, pl, game)
+    elseif val isa Tuple || val isa AbstractVector
+      fn(card_source, pl, game, val...)
+    else
+      fn(card_source, pl, game, val)
     end
 
-    return results
+    acc = merge(acc, nt)
+  end
+
+  return acc
 end
 
 end # module Effects

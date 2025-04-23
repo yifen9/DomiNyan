@@ -1,138 +1,122 @@
 module Pipeline
 
-export Step, Flow, run!
+export Step, Flow, pipeline!
 
 using ..Registry
 
 using ...Types
 using ...Player
 
-
 """
-    Step(op; args=nothing, condition=nothing, result_key=nothing)
+    Step(op; args=nothing, condition=nothing, loop=nothing)
 
 One atomic step in a Flow:
 
-- `op`         : Symbol of registered effect
-- `args`       :  
-    • `Tuple`/`Vector` positional args  
-    • `Dict{Symbol,Any}` keyword args  
-    • `Function(results, card_source, pl, game, out, i) -> Union{Tuple,Vector,Dict}`  
-      to dynamically compute args for each iteration  
-- `condition`  : Optional `(results, card_source, pl, game)->Bool` to skip step
-- `loop`       : 
-    • `Int`: total iterations 
-    • Function `(results, card_source, pl, game, out, i)->Bool` 
-        to decide "whether to do once again"
-- `result_key` : Optional Symbol under which to store the step’s result
+- `op`        : Symbol of registered effect
+- `args`      : Tuple/Vector positional args, Dict keyword args, or Function for dynamic args
+- `condition` : Optional (results, card, pl, game) → Bool to skip step
+- `loop`      : Int for fixed repeats, or Function (results, card, pl, game, out, i) → Bool
 """
 struct Step
     op::Symbol
     args::Any
     condition::Union{Nothing,Function}
     loop::Union{Nothing,Int,Function}
-    result_key::Union{Nothing,Symbol}
-    function Step(
-        op;
-        args       = nothing,
-        condition  = nothing,
-        loop       = nothing,
-        result_key = nothing)
-        new(op, args, condition, loop, result_key)
+    function Step(op; args=nothing, condition=nothing, loop=nothing)
+        new(op, args, condition, loop)
     end
 end
 
 """
-    Flow(steps; returns=[])
+    Flow(steps)
 
-A sequence of Steps.  `returns` lists which `result_key`s to extract at end.
+A sequence of Steps.  Always returns a NamedTuple with a single field `pipeline`,
+containing a Vector of each step’s result.
 """
 struct Flow
     steps::Vector{Step}
-    returns::Vector{Symbol}
-    Flow(
-        steps::Vector{Step};
-        returns::Vector{Symbol} = Symbol[]
-    ) = new(steps, returns)
 end
 
 """
-    run!(flow, card_source, pl, game) -> NamedTuple
+    pipeline!(flow, card_source, pl, game) -> NamedTuple
 
-Executes each Step in order.  Returns a NamedTuple of `flow.returns`.
+Executes each Step in order.  Always returns `(pipeline = Vector{Any})`.
 """
-function run!(
-    flow::Flow,
+function pipeline!(
     card_source::Types.CardTemplate,
     pl::Player.State,
-    game
-)
-    results = Dict{Symbol,Any}()
+    game,
+    flow::Flow
+)::NamedTuple
 
-    # Helper: dispatch one invocation, using st.args which may be dynamic
-    dispatch_with_args = function(st, out_prev, i)
-        # Determine args for this iteration
-        args_raw = if st.args isa Function
-            st.args(results, card_source, pl, game, out_prev, i)
-        else
+    acc = Dict{Symbol, Any}()
+
+    # helper to call one step
+    call_step = function(st, prev, i)
+        # compute args
+        args_raw = st.args isa Function ?
+            st.args(acc, card_source, pl, game, prev, i) :
             st.args
-        end
-
-        @show st.op
-        @show args_raw
-        @show typeof(args_raw)
-
-        # Call the registered function with args_raw
         fn = Registry.get(st.op)
+
+        @show args_raw
+        @show fn
+
         if args_raw === nothing
-            return fn(card_source, pl, game)
+            fn(card_source, pl, game)
         elseif args_raw isa Tuple || args_raw isa AbstractVector
-            return fn(card_source, pl, game, args_raw...)
+            fn(card_source, pl, game, args_raw...)
         elseif args_raw isa Dict
-            return fn(card_source, pl, game; args_raw...)
+            fn(card_source, pl, game; args_raw...)
         else
-            error("Pipeline.Step.args must be Tuple, Vector, Dict, Function or nothing")
+            error("Invalid Step.args")
         end
     end
 
     for st in flow.steps
-        # 1) maybe skip
-        if st.condition !== nothing && !st.condition(results, card_source, pl, game)
+        # skip if condition fails
+        if st.condition !== nothing && !st.condition(acc, card_source, pl, game)
             continue
         end
 
-        # 2) dispatch with positional or keyword args in a loop
-        out = dispatch_with_args(st, nothing, 1)
+        # no loop? just once
+        if st.loop === nothing
+            out = call_step(st, nothing, 1)
+            acc[st.op] = first(values(out))  # assume atomic returns NamedTuple with one field
+            continue
+        end
 
-        @show out
-
+        # has loop: collect into a Vector
+        # initialize
+        val = call_step(st, nothing, 1)
+        coll = Any[first(values(val))]     # first iteration
+        # fixed-count loop
         if st.loop isa Int
-            for i in 2:st.loop
-                out = dispatch_with_args(st, out, i)
-            end
-
-        elseif st.loop isa Function
-            # takein (results, card_source, pl, game, out, iteration)
-            i = 1
-            while st.loop(results, card_source, pl, game, out, i)
-                i += 1
-                out = dispatch_with_args(st, out, i)
-            end
+        for i in 2:st.loop
+            val = call_step(st, val, i)
+            push!(coll, first(values(val)))
         end
 
-        # 4) store into results if requested
-        if st.result_key !== nothing
-            results[st.result_key] = out
+        # function-guarded loop
+        else
+        i = 1
+        while st.loop(acc, card_source, pl, game, val, i)
+            i += 1
+            val = call_step(st, val, i)
+            push!(coll, first(values(val)))
         end
+        end
+
+        acc[st.op] = coll
     end
 
-    # 5) build the return NamedTuple
-    if !isempty(flow.returns)
-        vals = map(r -> results[r], flow.returns)
-        return (; zip(flow.returns, vals)...)
-    else
-        return NamedTuple()
-    end
+    @show acc
+
+    keys = collect(keys(acc))
+    vals = [acc[k] for k in keys]
+    return NamedTuple{Tuple(keys)}(vals...)
 end
+
+@register :pipeline pipeline!
 
 end # module Pipeline
